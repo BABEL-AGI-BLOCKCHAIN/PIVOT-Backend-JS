@@ -1,0 +1,31 @@
+services:
+  db:
+    image: postgres
+    restart: always
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=${DB_NAME}          
+      - POSTGRES_USER=${DB_USERNAME}    
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+  nextjs:
+    build: .
+    restart: always
+    ports:
+      - 3000:3000
+    environment:
+      - DATABASE_URL=$(DATABASE_URL)
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+    command: npm run dev
