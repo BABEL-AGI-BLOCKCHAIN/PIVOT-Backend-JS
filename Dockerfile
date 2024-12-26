@@ -1,20 +1,24 @@
-# Step 1: Use Node.js as the base image
+# Base image
 FROM node:18-alpine
 
-# Step 2: Set the working directory inside the container
+# Set the working directory
 WORKDIR /app
 
-# Step 3: Copy package.json and package-lock.json
-COPY package*.json ./
+# Copy package.json and package-lock.json first for dependency installation
+COPY package.json package-lock.json ./
 
-# Step 4: Install dependencies
+# Install dependencies
 RUN npm install
 
-# Step 5: Copy the rest of the project files into the container
+# Copy the entire application code to the container
 COPY . .
 
-# Step 6: Expose the port the app will run on
+# Run Prisma commands
+RUN npx prisma generate
+RUN npx prisma migrate dev --name init --skip-seed
+
+# Expose the port
 EXPOSE 3000
 
-# Step 7: Start the app in development mode
+# Start the Next.js application
 CMD ["npm", "run", "dev"]
