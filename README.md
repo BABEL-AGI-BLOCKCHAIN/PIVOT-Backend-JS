@@ -9,6 +9,12 @@ docker compose build
 docker compose up -d
 ```
 
+To connect the pgsql server 
+```bash
+npx prisma generate
+npx prisma migrate dev --name init --skip-seed
+```
+
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 Open [http://localhost:8080](http://localhost:8080) with your browser to see the adminer for your db. Choose pgSQL and enter your details.
 

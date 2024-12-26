@@ -12,11 +12,6 @@ RUN npm install
 
 # Copy the entire application code to the container
 COPY . .
-
-# Run Prisma commands
-RUN npx prisma generate
-RUN npx prisma migrate dev --name init --skip-seed
-
 # Expose the port
 EXPOSE 3000
 
