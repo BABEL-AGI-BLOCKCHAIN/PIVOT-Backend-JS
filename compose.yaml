@@ -16,12 +16,7 @@ services:
     restart: always
     ports:
       - 8080:8080
-    entrypoint: >
-      sh -c "
-      if ! id -u adminer > /dev/null 2>&1; then
-        echo 'adminer:x:999:999::/home/adminer:/bin/sh' >> /etc/passwd;
-      fi;
-      exec docker-php-entrypoint"
+    user: adminer
       
   nextjs:
     build: .
@@ -33,5 +28,8 @@ services:
     depends_on:
       - db
     volumes:
-      - .:/app
+        - .:/app
+        - /app/node_modules
+        - /app/.next
+
     command: npm run dev
