@@ -9,13 +9,13 @@ datasource db {
 
 model User {
   id            Int      @id @default(autoincrement())
-  email         String   @unique
-  password      String
+  walletAddress String?
   username      String   @unique
   twitterHandle String   @unique
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   topics        Topic[]
+  comments      Comment[]
 }
 
 model Topic {
@@ -26,4 +26,17 @@ model Topic {
   totalInvestment Int
   author          User?    @relation(fields: [authorId], references: [id])
   authorId        Int?
+  comments        Comment[]
+}
+
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  author    User?    @relation(fields: [authorId], references: [id])
+  authorId  Int?
+  topic     Topic?   @relation(fields: [topicId], references: [id])
+  topicId   Int?
 }
