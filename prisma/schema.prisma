@@ -16,6 +16,7 @@ model User {
   updatedAt     DateTime @updatedAt
   topics        Topic[]
   comments      Comment[]
+
 }
 
 model Topic {
@@ -40,3 +41,4 @@ model Comment {
   topic     Topic?   @relation(fields: [topicId], references: [id])
   topicId   Int?
 }
+
