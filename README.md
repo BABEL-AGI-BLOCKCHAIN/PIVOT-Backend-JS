@@ -4,6 +4,21 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 First, set up the .env file and then run the development server:
 
+Without Docker
+
+To connect to pg server
+```bash
+npx prisma db push
+npx prisma generate
+```
+```bash
+npm i
+npm run dev
+```
+
+
+With Docker
+
 ```bash
 docker compose build
 docker compose up -d
