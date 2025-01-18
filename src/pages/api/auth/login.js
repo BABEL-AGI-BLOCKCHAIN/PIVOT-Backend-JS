@@ -16,16 +16,12 @@ export default async function handler(req, res) {
       if (recoveredAddress.toLowerCase() !== walletAddress.toLowerCase()) {
         throw new apiError (401, "Unauthorized access");
       }
-      else {
-        console.log ("User verified: " + recoveredAddress);
-      }
 
       let user = await prisma.user.findUnique({ where: { walletAddress } });
 
       if (!user) {
         user = await prisma.user.create({ data: { walletAddress } });
       }
-      console.log ("User: " + user);
 
       const token = jwt.sign({ userId: user.id }, SECRET_KEY, { expiresIn: "1h" });
       return res.status(200).json(

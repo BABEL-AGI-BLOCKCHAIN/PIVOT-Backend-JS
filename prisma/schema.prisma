@@ -9,9 +9,9 @@ datasource db {
 
 model User {
   id            Int      @id @default(autoincrement())
-  walletAddress String  @unique
-  username      String   @unique
-  twitterHandle String   @unique
+  walletAddress String   @unique
+  username      String?   
+  twitterHandle String?   
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   topics        Topic[]
