@@ -2,7 +2,7 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-First, set up the .env file and then run the development server:
+First, change the .env.example to .env and set the variables and then run the development server:
 
 Without Docker
 
