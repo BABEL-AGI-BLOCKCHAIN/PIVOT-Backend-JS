@@ -1,9 +1,9 @@
 -- CreateTable
 CREATE TABLE "User" (
     "id" SERIAL NOT NULL,
-    "walletAddress" TEXT,
-    "username" TEXT NOT NULL,
-    "twitterHandle" TEXT NOT NULL,
+    "walletAddress" TEXT NOT NULL,
+    "username" TEXT,
+    "twitterHandle" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -35,10 +35,7 @@ CREATE TABLE "Comment" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
-
--- CreateIndex
-CREATE UNIQUE INDEX "User_twitterHandle_key" ON "User"("twitterHandle");
+CREATE UNIQUE INDEX "User_walletAddress_key" ON "User"("walletAddress");
 
 -- AddForeignKey
 ALTER TABLE "Topic" ADD CONSTRAINT "Topic_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;

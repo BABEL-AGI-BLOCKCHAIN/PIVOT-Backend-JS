@@ -8,8 +8,8 @@ Without Docker
 
 To connect to pg server
 ```bash
+npx prisma migrate dev --name init --skip-seed
 npx prisma db push
-npx prisma generate
 ```
 ```bash
 npm i
