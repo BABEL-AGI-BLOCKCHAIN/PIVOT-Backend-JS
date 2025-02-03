@@ -6,6 +6,8 @@ First, change the .env.example to .env and set the variables and then run the de
 
 Without Docker
 
+setup postgres in your machine and then
+
 To connect to pg server
 ```bash
 npx prisma migrate dev --name init --skip-seed

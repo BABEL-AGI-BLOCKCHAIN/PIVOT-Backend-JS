@@ -4,8 +4,6 @@ import prisma from "../../../lib/prisma.js";
 import apiResponse from "../../../utils/apiResponse.js";
 import apiError from "../../../utils/apiError.js";
 
-const SECRET_KEY = process.env.JWT_SECRET;
-
 export default async function handler(req, res) {
   if (req.method === "POST") {
     const { walletAddress, signature, message } = req.body;
@@ -23,7 +21,15 @@ export default async function handler(req, res) {
         user = await prisma.user.create({ data: { walletAddress } });
       }
 
-      const token = jwt.sign({ userId: user.id }, SECRET_KEY, { expiresIn: "1h" });
+      const token = jwt.sign(
+        { 
+          userId: user.id 
+        }, process.env.JWT_SECRET, 
+        { 
+          expiresIn: process.env.TOKEN_EXPIRY 
+        }
+      );
+      
       return res.status(200).json(
         new apiResponse (
           200,
