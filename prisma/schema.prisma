@@ -16,18 +16,6 @@ model User {
   updatedAt     DateTime @updatedAt
   topics        Topic[]
   comments      Comment[]
-
-}
-
-model Topic {
-  id              Int      @id @default(autoincrement())
-  content         String
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  totalInvestment Int
-  author          User?    @relation(fields: [authorId], references: [id])
-  authorId        Int?
-  comments        Comment[]
 }
 
 
@@ -42,3 +30,25 @@ model Comment {
   topicId   Int?
 }
 
+model Topic {
+  id              Int      @id @default(autoincrement())
+  content         String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  totalInvestment Int      @default(0)
+  author          User?    @relation(fields: [authorId], references: [id])
+  authorId        Int?
+  comments        Comment[]
+  topic_id        String   @unique @default(uuid()) 
+  metadata        Metadata? @relation 
+}
+
+model Metadata {
+  topic_id      String   @id
+  topic_title   String
+  topic_content String
+  image_url     String
+  erc20Address String
+  created_at    DateTime
+  topic         Topic    @relation(fields: [topic_id], references: [topic_id])
+}
