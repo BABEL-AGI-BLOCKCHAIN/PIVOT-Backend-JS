@@ -39,7 +39,7 @@ model Topic {
   author          User?    @relation(fields: [authorId], references: [id])
   authorId        Int?
   comments        Comment[]
-  topic_id        String   @unique @default(uuid()) 
+  topic_id        String?   @unique @default(uuid()) 
   metadata        Metadata? @relation 
 }
 
@@ -51,4 +51,9 @@ model Metadata {
   erc20Address String
   created_at    DateTime
   topic         Topic    @relation(fields: [topic_id], references: [topic_id])
+}
+
+model EventSync {
+  eventName String @id
+  lastBlock Int
 }
