@@ -4,7 +4,6 @@ import { configDotenv } from 'dotenv';
 configDotenv();
 const port = process.env.PORT || 5000 ;
 
-connectDB() ;
 
 app.get('/', (req, res) => {
     res.send('Hello World!') ;

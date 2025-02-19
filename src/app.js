@@ -13,4 +13,7 @@ app.use(cookieParser()) ;
 app.use(express.json()) ;
 
 import authRouter from './routes/auth.route.js';
-app.use (api/v1/user, authRouter);
+app.use ('api/v1/user', authRouter);
+
+
+export default app;

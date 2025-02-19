@@ -1,6 +1,6 @@
-import prisma from "../utils/prisma";
+import prisma from "../utils/prisma.js";
 import { verifyMessage } from "ethers";
-import { generateAccessToken, generateRefreshToken } from "../utils/jwt";
+import { generateAccessToken, generateRefreshToken } from "../utils/jwt.js";
 
 const signIn = async (req, res) => {
     try {
