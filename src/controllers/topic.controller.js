@@ -1,4 +1,9 @@
 import prisma from "../utils/prisma.js";
+import {contract, provider} from "../utils/provider.js";
+import axios from "axios";
+
+const MAX_BLOCK_RANGE = 50000;
+const baseURL = process.env.BASE_URL || "http://localhost:5000";
 
 const createTopic = async (req, res) => {
     try {
@@ -33,6 +38,8 @@ const createTopic = async (req, res) => {
 
 const getTopics = async (_, res) => {
     try {
+
+        await axios.get(`${baseURL}/api/v1/topics/historic?eventName=TopicCreate`);
         const newTopics = await prisma.topic.findMany({
             orderBy: {
               createdAt: 'asc',
@@ -75,7 +82,7 @@ const getTopicsByUser = async (req, res) => {
     }
 }
 
-const getTopicById = async (_, res) => {
+const getTopicById = async (req, res) => {
     try {
         const topicId = parseInt(req.params.topicId);
         const newTopic = await prisma.topic.findOne({
@@ -100,4 +107,57 @@ const getTopicById = async (_, res) => {
     }
 }
 
-export  {getTopics, getTopicsByUser, getTopicById, createTopic};
+const getHistoricTopics = async (req, res) => {
+    const { eventName } = req.query;
+  
+    if (!eventName) {
+      return res.status(400).json({ error: "The 'eventName' query parameter is required." });
+    }
+  
+    try {
+      const getResponse = await axios.get(`${baseURL}/api/events/getEventSync?eventName=${eventName}`);
+      const lastBlock = getResponse.data.lastBlock;
+  
+      // Get the current blockchain block number
+      const currentBlock = await provider.getBlockNumber();
+      let fromBlock = lastBlock + 1;
+      let toBlock = currentBlock;
+  
+      console.log(`Fetching ${eventName} events from block ${fromBlock} to ${toBlock}`);
+  
+      while (fromBlock <= toBlock) {
+        const endBlock = Math.min(fromBlock + MAX_BLOCK_RANGE - 1, toBlock);
+        console.log(`Fetching events from block ${fromBlock} to ${endBlock}`);
+  
+        const filter = contract.filters[eventName]();
+        const events = await contract.queryFilter(filter, fromBlock, endBlock);
+        console.log(`Found ${events.length} ${eventName} events from block ${fromBlock} to ${endBlock}.`);
+  
+        for (const event of events) {
+          const { promoter, topicId, investment, position, tokenAddress, nonce } = event.args;
+  
+          try {
+            await axios.post(`${baseURL}/api/events/topicCreate`, {
+              promoter,
+              topicId: topicId.toString(),
+              investment: investment.toString(),
+              position: parseInt(position),
+              tokenAddress,
+              nonce: nonce.toString(),
+            });
+          } catch (error) {
+            console.error(`Error processing event:`, error);
+          }
+        }
+  
+        fromBlock = endBlock + 1;
+      }
+  
+      return res.status(200).json({ message: "Historic events processed successfully." });
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+};
+
+
+export  {getTopics, getTopicsByUser, getTopicById, createTopic, getHistoricTopics};
