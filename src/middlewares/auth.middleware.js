@@ -1,9 +1,9 @@
 import jwt from "jsonwebtoken";
-import prisma from "../utils/prisma";
+import prisma from "../utils/prisma.js";
 
 
 
-const verifyJWT = asyncHandler( async (req, _ , next) => {
+const verifyJWT = async (req, _ , next) => {
     try {
         const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "") ;
         if (!token) {
@@ -27,7 +27,7 @@ const verifyJWT = asyncHandler( async (req, _ , next) => {
         throw new apiError(401 , error?.message || "Unauthorized request")
     }
 
-});
+};
 
 
 

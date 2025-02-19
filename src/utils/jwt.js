@@ -6,7 +6,7 @@ const generateAccessToken = (user) => {
       username: user.username,
       email: user.email,
     },
-    process.env.ACCESS_TOKEN_SECRET,
+    process.env.JWT_SECRET,
     { expiresIn: process.env.ACCESS_TOKEN_EXPIRY }
   );
 };
@@ -16,7 +16,7 @@ const generateRefreshToken = (user) => {
     {
       id: user.id,
     },
-    process.env.ACCESS_REFRESH_TOKEN,
+    process.env.JWT_SECRET,
     { expiresIn: process.env.REFRESH_TOKEN_EXPIRY }
   );
 };

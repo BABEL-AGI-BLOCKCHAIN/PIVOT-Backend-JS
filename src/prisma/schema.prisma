@@ -7,18 +7,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model User {
-  id            Int      @id @default(autoincrement())
-  walletAddress String   @unique
-  username      String?   
-  twitterHandle String?   
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id            Int       @id @default(autoincrement())
+  walletAddress String    @unique
+  username      String?
+  twitterHandle String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
   topics        Topic[]
   comments      Comment[]
 }
-
 
 model Comment {
   id        Int      @id @default(autoincrement())
@@ -32,16 +30,18 @@ model Comment {
 }
 
 model Topic {
-  id              Int      @id @default(autoincrement())
-  content         String
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  totalInvestment Int      @default(0)
-  author          User?    @relation(fields: [authorId], references: [id])
-  authorId        Int?
-  comments        Comment[]
-  topic_id        String?   @unique @default(uuid()) 
-  metadata        Metadata? @relation 
+  id           Int       @id
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  Investment   Int       @default(0)
+  promoter     User?     @relation(fields: [promoterId], references: [id])
+  promoterId   Int?
+  position     Int
+  tokenAddress String
+  nonce        String
+  comments     Comment[]
+  topic_id     String?   @unique @default(uuid())
+  metadata     Metadata? @relation
 }
 
 model Metadata {
@@ -49,8 +49,6 @@ model Metadata {
   topic_title   String
   topic_content String
   image_url     String
-  erc20Address String
-  created_at    DateTime
   topic         Topic    @relation(fields: [topic_id], references: [topic_id])
 }
 

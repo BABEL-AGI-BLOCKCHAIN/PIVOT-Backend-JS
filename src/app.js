@@ -2,6 +2,10 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
 
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 const app = express();
 
 app.use(cors({
@@ -14,6 +18,9 @@ app.use(express.json()) ;
 
 import authRouter from './routes/auth.route.js';
 app.use ('api/v1/user', authRouter);
+
+import topicRouter from './routes/topic.route.js';
+app.use ('api/v1/topic', topicRouter);
 
 
 export default app;

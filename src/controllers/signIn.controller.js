@@ -22,14 +22,11 @@ const signIn = async (req, res) => {
         const refreshToken = generateRefreshToken(user);
         
         return res.status(200).json(
-          new apiResponse (
-            200,
             {
-              accessToken,
-              refreshToken,
+                accessToken,
+                refreshToken
             },
-            "Login successful"
-          )
+            "signIn successful"
         )
     } catch (error) {
         console.error(error);
