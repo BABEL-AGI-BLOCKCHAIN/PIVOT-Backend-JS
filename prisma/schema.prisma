@@ -18,19 +18,9 @@ model User {
   comments      Comment[]
 }
 
-model Comment {
-  id        Int      @id @default(autoincrement())
-  content   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  author    User?    @relation(fields: [authorId], references: [id])
-  authorId  Int?
-  topic     Topic?   @relation(fields: [topicId], references: [id])
-  topicId   Int?
-}
 
 model Topic {
-  id           Int       @id
+  id           Int       @id @default(autoincrement())
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
   Investment   Int       @default(0)
@@ -44,6 +34,16 @@ model Topic {
   metadata     Metadata? @relation
 }
 
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  author    User?    @relation(fields: [authorId], references: [id])
+  authorId  Int?
+  topic     Topic?   @relation(fields: [topicId], references: [id])
+  topicId   Int?
+}
 model Metadata {
   topic_id      String   @id
   topic_title   String

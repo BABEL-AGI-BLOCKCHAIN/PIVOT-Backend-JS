@@ -17,10 +17,13 @@ app.use(cookieParser()) ;
 app.use(express.json()) ;
 
 import authRouter from './routes/auth.route.js';
-app.use ('api/v1/user', authRouter);
+app.use ('/api/v1/user', authRouter);
 
 import topicRouter from './routes/topic.route.js';
-app.use ('api/v1/topic', topicRouter);
+app.use ('/api/v1/topic', topicRouter);
+
+import eventRouter from './routes/event.route.js';
+app.use ('/api/v1/event', eventRouter);
 
 
 export default app;

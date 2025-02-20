@@ -17,14 +17,14 @@ const verifyJWT = async (req, _ , next) => {
         )
 
         if (!user) {
-            throw new apiError(401 ,"Unauthorized request");
+            throw new error(401 ,"Unauthorized request");
         }
 
         req.user = user ;
         next();
         
     } catch (error) {
-        throw new apiError(401 , error?.message || "Unauthorized request")
+        throw new error(401 , error?.message || "Unauthorized request")
     }
 
 };

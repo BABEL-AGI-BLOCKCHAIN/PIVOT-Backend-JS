@@ -1,6 +1,6 @@
 import prisma from '../utils/prisma.js';
 
-export const getEventSync = async (req, res) => {
+const getEventSync = async (req, res) => {
   const { eventName } = req.query;
 
   if (!eventName) {
@@ -24,7 +24,7 @@ export const getEventSync = async (req, res) => {
   }
 };
 
-export const updateEventSync = async (req, res) => {
+const updateEventSync = async (req, res) => {
   const { eventName } = req.query;
   const { blockNumber } = req.body;
 
@@ -47,3 +47,5 @@ export const updateEventSync = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
+
+export { getEventSync, updateEventSync };

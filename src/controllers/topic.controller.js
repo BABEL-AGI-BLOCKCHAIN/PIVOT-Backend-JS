@@ -7,39 +7,44 @@ const baseURL = process.env.BASE_URL || "http://localhost:5000";
 
 const createTopic = async (req, res) => {
     try {
-        const {topicId, promoter, investment, position, tokenAddress, nonce} = req.body;
-        const existingTopic = await prisma.topic.findUnique({ where: { topicId } });
+        const { topicId, promoter, investment, position, tokenAddress, nonce } = req.body;
 
-        if (existingTopic) {
-            throw new Error("Topic with the same topicId already exists");
+        const user = await prisma.user.findUnique({
+            where: { walletAddress: promoter },
+        });
+
+        if (!user) {
+            return res.status(400).json({ error: "Promoter does not exist" });
         }
-        
+
         const newTopic = await prisma.topic.create({
             data: {
-                topicId,
-                promoter,
-                investment,
+                topic_id: topicId,
+                promoter: { connect: { id: user.id } }, // Fixed: using nested connect
+                Investment: parseInt(investment),
                 position,
                 tokenAddress,
                 nonce,
             },
         });
-        
+
         res.status(201).json({
             newTopic,
             message: "Topic created successfully",
         });
     } catch (error) {
+        console.error("Error creating topic:", error.message);
         res.status(500).json({
             error: error.message || "Internal server error",
         });
     }
-}
+};
 
 const getTopics = async (_, res) => {
     try {
 
-        await axios.get(`${baseURL}/api/v1/topics/historic?eventName=TopicCreate`);
+        // await axios.get(`${baseURL}/api/v1/topic/historic?eventName=CreateTopic`);
+
         const newTopics = await prisma.topic.findMany({
             orderBy: {
               createdAt: 'asc',
@@ -115,10 +120,9 @@ const getHistoricTopics = async (req, res) => {
     }
   
     try {
-      const getResponse = await axios.get(`${baseURL}/api/events/getEventSync?eventName=${eventName}`);
+      const getResponse = await axios.get(`${baseURL}/api/v1/event/getEventSync?eventName=${eventName}`);
       const lastBlock = getResponse.data.lastBlock;
   
-      // Get the current blockchain block number
       const currentBlock = await provider.getBlockNumber();
       let fromBlock = lastBlock + 1;
       let toBlock = currentBlock;

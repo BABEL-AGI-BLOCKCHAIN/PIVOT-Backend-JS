@@ -1,20 +1,24 @@
 import { contract } from '../utils/provider.js';
-import {createTopic} from '../controllers/topic.controller.js';
+import axios from 'axios';
+
+const baseURL = process.env.base_url || 'http://localhost:5000';
 
 const listenToCreateTopic = () => {
   contract.on('CreateTopic', async (promoter, topicId, investment, position, tokenAddress, nonce) => {
     try {
-
-      await createTopic({ 
+      
+      const response = await axios.post(`${baseURL}/api/v1/topic/createTopic`, {
         promoter,
         topicId: topicId.toString(),
         investment: investment.toString(),
         position: parseInt(position),
         tokenAddress,
-        nonce: nonce.toString(), 
+        nonce: nonce.toString(),
       });
+
+      console.log('Topic created successfully:', response.data);
     } catch (error) {
-      console.error('Error handling CreateTopic event:', error);
+      console.error('Error handling CreateTopic event:', error.message);
     }
   });
 };
