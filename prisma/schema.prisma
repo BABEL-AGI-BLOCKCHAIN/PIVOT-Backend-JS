@@ -18,20 +18,18 @@ model User {
   comments      Comment[]
 }
 
-
 model Topic {
-  id           Int       @id @default(autoincrement())
+  id           String    @id
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
-  Investment   Int       @default(0)
+  investment   Int       @default(0)
   promoter     User?     @relation(fields: [promoterId], references: [id])
   promoterId   Int?
   position     Int
   tokenAddress String
   nonce        String
   comments     Comment[]
-  topic_id     String?   @unique @default(uuid())
-  metadata     Metadata? @relation
+  metadata     Metadata?
 }
 
 model Comment {
@@ -42,17 +40,19 @@ model Comment {
   author    User?    @relation(fields: [authorId], references: [id])
   authorId  Int?
   topic     Topic?   @relation(fields: [topicId], references: [id])
-  topicId   Int?
+  topicId   String?
 }
+
 model Metadata {
-  topic_id      String   @id
+  topicId       String   @id
   topic_title   String
   topic_content String
   image_url     String
-  topic         Topic    @relation(fields: [topic_id], references: [topic_id])
+  topic         Topic    @relation(fields: [topicId], references: [id])
 }
 
 model EventSync {
   eventName String @id
   lastBlock Int
 }
+

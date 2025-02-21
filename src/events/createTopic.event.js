@@ -8,12 +8,12 @@ const listenToCreateTopic = () => {
     try {
       
       const response = await axios.post(`${baseURL}/api/v1/topic/createTopic`, {
-        promoter,
+        promoter, 
         topicId: topicId.toString(),
-        investment: investment.toString(),
-        position: parseInt(position),
+        investment: Number(investment), 
+        position: Number(position),   
         tokenAddress,
-        nonce: nonce.toString(),
+        nonce: nonce.toString(), 
       });
 
       console.log('Topic created successfully:', response.data);
