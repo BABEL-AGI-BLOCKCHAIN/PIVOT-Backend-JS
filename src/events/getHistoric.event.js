@@ -47,7 +47,7 @@ async function processHistoricTopics(eventName) {
                     }
                     
                 } catch (error) {
-                    console.error(`Error processing event:`, error.message);
+                    console.error(`Error processing event:`, error.response.data);
                 }
             }
 
