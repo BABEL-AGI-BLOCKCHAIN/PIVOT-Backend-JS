@@ -10,8 +10,6 @@ async function processHistoricTopics(eventName) {
         const lastBlock = getResponse.data.lastBlock;
 
         const currentBlock = await provider.getBlockNumber();
-
-        console.log (currentBlock) ;
         let fromBlock = lastBlock + 1;
         const toBlock = currentBlock;
 

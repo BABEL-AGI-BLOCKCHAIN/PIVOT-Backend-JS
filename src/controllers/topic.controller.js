@@ -5,8 +5,10 @@ const createTopic = async (req, res) => {
     try {
         const { topicId, promoter, investment, position, tokenAddress, nonce } = req.body;
 
-        const user = await prisma.user.findUnique({
+        const user = await prisma.user.upsert({
             where: { walletAddress: promoter },
+            update: {},
+            create: { walletAddress: promoter },
         });
 
         if (!user) {
@@ -18,7 +20,6 @@ const createTopic = async (req, res) => {
           });
       
           if (existingTopic) {
-            console.log("Topic already exists:", topicId);
             return res.status(200).json({
               message: "Topic already exists",
               topic: existingTopic,
@@ -41,9 +42,8 @@ const createTopic = async (req, res) => {
             message: "Topic created successfully",
         });
     } catch (error) {
-        console.error("Error creating topic:", error.message);
         res.status(500).json({
-            error: error.message || "Internal server error",
+            error: error.response.data || "Internal server error",
         });
     }
 };
