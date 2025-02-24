@@ -18,7 +18,7 @@ const listenToCreateTopic = () => {
 
       console.log('Topic created successfully:', response.data);
     } catch (error) {
-      console.error('Error handling CreateTopic event:', error.message);
+      console.error('Error handling CreateTopic event:', error.response.data);
     }
   });
 };

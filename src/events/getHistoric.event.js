@@ -15,22 +15,17 @@ async function processHistoricTopics(eventName) {
         let fromBlock = lastBlock + 1;
         const toBlock = currentBlock;
 
-        console.log(`Fetching ${eventName} events from block ${fromBlock} to ${toBlock}`);
-
         while (fromBlock <= toBlock) {
             const endBlock = Math.min(fromBlock + MAX_BLOCK_RANGE - 1, toBlock);
 
             const filter = contract.filters[eventName](null, null, null, null, null, null);
             const events = await contract.queryFilter(filter, fromBlock, endBlock);
-            if (events.length) {
-                console.log(`Found ${events.length} ${eventName} events from block ${fromBlock} to ${endBlock}.`);
-            }
 
             for (const event of events) {
                 const { promoter, topicId, investment, position, tokenAddress, nonce } = event.args;
 
                 try {
-                    const isTopic = await axios.post(`${baseURL}/api/v1/topic/createTopic`, {
+                    await axios.post(`${baseURL}/api/v1/topic/createTopic`, {
                         promoter, 
                         topicId: topicId.toString(),
                         investment: Number(investment), 
@@ -38,13 +33,6 @@ async function processHistoricTopics(eventName) {
                         tokenAddress,
                         nonce: nonce.toString(), 
                     });
-
-                    if (isTopic.status == 200) {
-                        console.log("Topic already exists");
-                    }
-                    else if (isTopic.status == 201) {
-                        console.log("Topic created successfully");
-                    }
                     
                 } catch (error) {
                     console.error(`Error processing event:`, error.response.data);
@@ -56,13 +44,13 @@ async function processHistoricTopics(eventName) {
                     blockNumber: endBlock,
                 });
             } catch (error) {
-                console.error("Error updating event sync:", error);
+                console.error("Error updating event sync:", error.response.data);
             }
 
             fromBlock = endBlock + 1;
         }
     } catch (error) {
-        console.error("Error processing historic topics:", error.message);
+        console.error("Error processing historic topics:", error.response.data);
     }
 }
 
