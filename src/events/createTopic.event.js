@@ -10,7 +10,7 @@ const listenToCreateTopic = async () => {
       const response = await axios.post(`${baseURL}/api/v1/topic/createTopic`, {
         promoter, 
         topicId: topicId.toString(),
-        investment: Number(investment), 
+        investment: BigInt(investment), 
         position: Number(position),   
         tokenAddress,
         nonce: nonce.toString(), 

@@ -11,7 +11,7 @@ async function processHistoricTopics(eventName) {
 
         const currentBlock = await provider.getBlockNumber();
         let fromBlock = lastBlock + 1;
-        const toBlock = currentBlock;
+        const toBlock = BigInt(currentBlock);
 
         while (fromBlock <= toBlock) {
             const endBlock = Math.min(fromBlock + MAX_BLOCK_RANGE - 1, toBlock);
@@ -26,7 +26,7 @@ async function processHistoricTopics(eventName) {
                     await axios.post(`${baseURL}/api/v1/topic/createTopic`, {
                         promoter, 
                         topicId: topicId.toString(),
-                        investment: Number(investment), 
+                        investment: BigInt(investment), 
                         position: Number(position),   
                         tokenAddress,
                         nonce: nonce.toString(), 

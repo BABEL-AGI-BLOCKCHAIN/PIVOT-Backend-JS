@@ -30,7 +30,7 @@ const createTopic = async (req, res) => {
             data: {
                 id: topicId,
                 promoter: { connect: { id: user.id } },
-                investment,
+                investment: BigInt(investment),
                 position,
                 tokenAddress,
                 nonce,

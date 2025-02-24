@@ -22,7 +22,7 @@ model Topic {
   id           String    @id
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
-  investment   Int       @default(0)
+  investment   BigInt       @default(0)
   promoter     User?     @relation(fields: [promoterId], references: [id])
   promoterId   Int?
   position     Int
@@ -53,6 +53,6 @@ model Metadata {
 
 model EventSync {
   eventName String @id
-  lastBlock Int
+  lastBlock BigInt
 }
 
