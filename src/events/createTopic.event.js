@@ -7,7 +7,7 @@ const listenToCreateTopic = async () => {
   contract.on('CreateTopic', async (promoter, topicId, investment, position, tokenAddress, nonce) => {
     try {
 
-      const response = await axios.post(`${baseURL}/api/v1/topic/createTopic`, {
+      await axios.post(`${baseURL}/api/v1/topic/createTopic`, {
         promoter, 
         topicId: topicId.toString(),
         investment: BigInt(investment), 
@@ -16,7 +16,6 @@ const listenToCreateTopic = async () => {
         nonce: nonce.toString(), 
       });
 
-      console.log('Topic created successfully:', response.data);
     } catch (error) {
       console.error('Error handling CreateTopic event:', error.response.data);
     }
