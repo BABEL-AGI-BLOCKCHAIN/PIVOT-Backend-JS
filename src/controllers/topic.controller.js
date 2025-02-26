@@ -3,50 +3,52 @@ import prisma from "../utils/prisma.js";
 
 const createTopic = async (req, res) => {
     try {
-        const { topicId, promoter, investment, position, tokenAddress, nonce } = req.body;
-
-        const user = await prisma.user.upsert({
-            where: { walletAddress: promoter },
-            update: {},
-            create: { walletAddress: promoter },
+      const { topicId, promoter, investment, position, tokenAddress, nonce, chainId } = req.body;
+  
+      const user = await prisma.user.upsert({
+        where: { walletAddress: promoter },
+        update: {},
+        create: { walletAddress: promoter },
+      });
+  
+      if (!user) {
+        return res.status(400).json({ error: "Promoter does not exist" });
+      }
+  
+      const existingTopic = await prisma.topic.findUnique({
+        where: { id: topicId },
+      });
+  
+      if (existingTopic) {
+        return res.status(200).json({
+          message: "Topic already exists",
+          topic: existingTopic,
         });
-
-        if (!user) {
-            return res.status(400).json({ error: "Promoter does not exist" });
-        }
-
-        const existingTopic = await prisma.topic.findUnique({
-            where: { id: topicId },
-          });
-      
-          if (existingTopic) {
-            return res.status(200).json({
-              message: "Topic already exists",
-              topic: existingTopic,
-            });
-          }
-
-        const newTopic = await prisma.topic.create({
-            data: {
-                id: topicId,
-                promoter: { connect: { id: user.id } },
-                investment: BigInt(investment),
-                position,
-                tokenAddress,
-                nonce,
-            },
-        });
-
-        res.status(201).json({
-            newTopic,
-            message: "Topic created successfully",
-        });
+      }
+  
+      const newTopic = await prisma.topic.create({
+        data: {
+          id: topicId,
+          promoter: { connect: { id: user.id } },
+          investment: BigInt(investment),
+          position,
+          tokenAddress,
+          nonce,
+          chainId,
+        },
+      });
+  
+      res.status(201).json({
+        newTopic,
+        message: "Topic created successfully",
+      });
     } catch (error) {
-        res.status(500).json({
-            error: error.message || "Internal server error",
-        });
+      res.status(500).json({
+        error: error.message || "Internal server error",
+      });
     }
-};
+  };
+  
 
 const getTopics = async (_, res) => {
     try {

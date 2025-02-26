@@ -22,12 +22,14 @@ model Topic {
   id           String    @id
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
-  investment   BigInt       @default(0)
+  investment   BigInt    @default(0)
   promoter     User?     @relation(fields: [promoterId], references: [id])
   promoterId   Int?
   position     Int
   tokenAddress String
   nonce        String
+  txnHash      String?
+  chainId      String
   comments     Comment[]
   metadata     Metadata?
 }
@@ -44,15 +46,14 @@ model Comment {
 }
 
 model Metadata {
-  topicId       String   @id
+  topicId       String @id
   topic_title   String
   topic_content String
   image_url     String
-  topic         Topic    @relation(fields: [topicId], references: [id])
+  topic         Topic  @relation(fields: [topicId], references: [id])
 }
 
 model EventSync {
   eventName String @id
   lastBlock BigInt
 }
-

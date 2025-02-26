@@ -15,6 +15,8 @@ app.use(cors({
 
 app.use(cookieParser()) ;
 app.use(express.json()) ;
+BigInt.prototype.toJSON = function () { return this.toString(); };
+
 
 import authRouter from './routes/auth.route.js';
 app.use ('/api/v1/user', authRouter);

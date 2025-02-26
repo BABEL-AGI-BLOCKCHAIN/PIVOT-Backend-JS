@@ -6,7 +6,6 @@ const initEventListeners = () => {
   listenToCreateTopic();
   getHistoricTopics("CreateTopic");
   cron.schedule('0 */2 * * * *', async () => {
-    console.log('Running Cron Job');
     await getHistoricTopics("CreateTopic");
   });
 };

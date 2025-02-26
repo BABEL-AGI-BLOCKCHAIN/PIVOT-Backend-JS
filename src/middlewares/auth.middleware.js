@@ -24,7 +24,7 @@ const verifyJWT = async (req, _ , next) => {
         next();
         
     } catch (error) {
-        throw new error(401 , error.response.data || "Unauthorized request")
+        throw new error(401 , error.message || "Unauthorized request")
     }
 
 };

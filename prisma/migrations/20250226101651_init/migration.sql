@@ -15,11 +15,13 @@ CREATE TABLE "Topic" (
     "id" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "investment" INTEGER NOT NULL DEFAULT 0,
+    "investment" BIGINT NOT NULL DEFAULT 0,
     "promoterId" INTEGER,
     "position" INTEGER NOT NULL,
     "tokenAddress" TEXT NOT NULL,
     "nonce" TEXT NOT NULL,
+    "txnHash" TEXT,
+    "chainId" TEXT NOT NULL,
 
     CONSTRAINT "Topic_pkey" PRIMARY KEY ("id")
 );
@@ -49,7 +51,7 @@ CREATE TABLE "Metadata" (
 -- CreateTable
 CREATE TABLE "EventSync" (
     "eventName" TEXT NOT NULL,
-    "lastBlock" INTEGER NOT NULL,
+    "lastBlock" BIGINT NOT NULL,
 
     CONSTRAINT "EventSync_pkey" PRIMARY KEY ("eventName")
 );

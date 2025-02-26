@@ -29,10 +29,10 @@ const signIn = async (req, res) => {
             "signIn successful"
         )
     } catch (error) {
-        console.error(error.response.data);
+        console.error(error.message);
         res.status(500).
         json({
-            error: error.response.data || "Internal server error" 
+            error: error.message || "Internal server error" 
         });
         
     }

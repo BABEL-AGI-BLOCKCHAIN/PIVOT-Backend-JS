@@ -22,16 +22,19 @@ async function processHistoricTopics(eventName) {
         const filter = contract.filters[eventName](null, null, null, null, null, null);
         const events = await contract.queryFilter(filter, fromBlock, endBlock);
         
-        for (const event of events) {
-          const { promoter, topicId, investment, position, tokenAddress, nonce } = event.args;
+        for (const e of events) {
+          const { promoter, topicId, investment, position, tokenAddress, nonce } = e.args;
           try {
+            const { chainId } = await provider.getNetwork();
+      
             await axios.post(`${baseURL}/api/v1/topic/createTopic`, {
-              promoter, 
+              promoter,
               topicId: topicId.toString(),
-              investment: BigInt(investment), 
-              position: Number(position),   
+              investment: BigInt(investment),
+              position: Number(position),
               tokenAddress,
               nonce: nonce.toString(),
+              chainId: chainId.toString(),
             });
           } catch (error) {
             console.error(`Error processing event:`, error.response ? error.response.data : error.message);
@@ -40,16 +43,16 @@ async function processHistoricTopics(eventName) {
         
         try {
           await axios.post(`${baseURL}/api/v1/event/updateEventSync?eventName=${eventName}`, {
-            blockNumber: endBlock,
+            blockNumber: BigInt(endBlock),
           });
         } catch (error) {
           console.error("Error updating event sync:", error.response ? error.response.data : error.message);
         }
         
-        fromBlock = endBlock + 1n;
+        fromBlock = BigInt(endBlock) + 1n;
       }
     } catch (error) {
-      console.error("Error processing historic topics:", error.message);
+      console.error("Error processing historic topics:", error.response ? error.response.data : error.message);
     }
   }
   
