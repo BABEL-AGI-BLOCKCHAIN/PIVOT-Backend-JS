@@ -4,9 +4,10 @@ import axios from 'axios';
 const baseURL = process.env.base_url || 'http://localhost:5000';
 
 const listenToCreateTopic = async () => {
-  contract.on('CreateTopic', async (promoter, topicId, investment, position, tokenAddress, nonce) => {
+  contract.on('CreateTopic', async (promoter, topicId, investment, position, tokenAddress, nonce, event) => {
     try {
       const { chainId } = await provider.getNetwork();
+      const transactionHash = await event.log.transactionHash;
 
       await axios.post(`${baseURL}/api/v1/topic/createTopic`, {
         promoter,
@@ -15,6 +16,7 @@ const listenToCreateTopic = async () => {
         position: Number(position),
         tokenAddress,
         nonce: nonce.toString(),
+        transactionHash,
         chainId: chainId.toString(),
       });
     } catch (error) {

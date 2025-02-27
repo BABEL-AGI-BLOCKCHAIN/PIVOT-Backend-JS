@@ -3,7 +3,7 @@ import prisma from "../utils/prisma.js";
 
 const createTopic = async (req, res) => {
     try {
-      const { topicId, promoter, investment, position, tokenAddress, nonce, chainId } = req.body;
+      const { topicId, promoter, investment, position, tokenAddress, nonce, chainId, transactionHash } = req.body;
   
       const user = await prisma.user.upsert({
         where: { walletAddress: promoter },
@@ -15,7 +15,7 @@ const createTopic = async (req, res) => {
         return res.status(400).json({ error: "Promoter does not exist" });
       }
   
-      const existingTopic = await prisma.topic.findUnique({
+      const existingTopic = await prisma.createTopic.findUnique({
         where: { id: topicId },
       });
   
@@ -26,7 +26,7 @@ const createTopic = async (req, res) => {
         });
       }
   
-      const newTopic = await prisma.topic.create({
+      const newTopic = await prisma.createTopic.create({
         data: {
           id: topicId,
           promoter: { connect: { id: user.id } },
@@ -34,6 +34,7 @@ const createTopic = async (req, res) => {
           position,
           tokenAddress,
           nonce,
+          transactionHash,
           chainId,
         },
       });
@@ -47,9 +48,8 @@ const createTopic = async (req, res) => {
         error: error.message || "Internal server error",
       });
     }
-  };
+};
   
-
 const getTopics = async (_, res) => {
     try {
 

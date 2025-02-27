@@ -23,9 +23,10 @@ async function processHistoricTopics(eventName) {
         const events = await contract.queryFilter(filter, fromBlock, endBlock);
         
         for (const e of events) {
-          const { promoter, topicId, investment, position, tokenAddress, nonce } = e.args;
+          const { promoter, topicId, investment, position, tokenAddress, nonce} = e.args;
           try {
             const { chainId } = await provider.getNetwork();
+            const transactionHash = e.transactionHash || e.log.transactionHash;
       
             await axios.post(`${baseURL}/api/v1/topic/createTopic`, {
               promoter,
@@ -34,6 +35,7 @@ async function processHistoricTopics(eventName) {
               position: Number(position),
               tokenAddress,
               nonce: nonce.toString(),
+              transactionHash,
               chainId: chainId.toString(),
             });
           } catch (error) {
@@ -54,7 +56,7 @@ async function processHistoricTopics(eventName) {
     } catch (error) {
       console.error("Error processing historic topics:", error.response ? error.response.data : error.message);
     }
-  }
+}
   
 
 export default processHistoricTopics;
