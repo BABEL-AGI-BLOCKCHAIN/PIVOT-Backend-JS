@@ -53,7 +53,7 @@ const createTopic = async (req, res) => {
 const getTopics = async (_, res) => {
     try {
 
-        const newTopics = await prisma.topic.findMany({
+        const newTopics = await prisma.createTopic.findMany({
             orderBy: {
               createdAt: 'asc',
             },
@@ -74,7 +74,7 @@ const getTopics = async (_, res) => {
 const getTopicsByUser = async (req, res) => {
     try {
         const userId = parseInt(req.params.userId);
-        const newTopics = await prisma.topic.findMany({
+        const newTopics = await prisma.createTopic.findMany({
             where: {
                 userId,
             },
@@ -98,7 +98,7 @@ const getTopicsByUser = async (req, res) => {
 const getTopicById = async (req, res) => {
     try {
         const topicId = parseInt(req.params.topicId);
-        const newTopic = await prisma.topic.findOne({
+        const newTopic = await prisma.createTopic.findOne({
             where: {
                 id: topicId,
             },
@@ -140,7 +140,7 @@ const invest = async (req, res) => {
   const investment = await prisma.invest.create({
     data: {
       investor: { connect: { id: user.id } },
-      topic: { connect: { id: topic.id } },
+      topicId: { connect: { id: topic.id } },
       amount: BigInt(amount),
       position,
       nonce,
