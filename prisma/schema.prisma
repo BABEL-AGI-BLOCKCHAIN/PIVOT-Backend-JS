@@ -8,14 +8,15 @@ datasource db {
 }
 
 model User {
-  id            Int       @id @default(autoincrement())
-  walletAddress String    @unique
+  id            Int           @id @default(autoincrement())
+  walletAddress String        @unique
   username      String?
   twitterHandle String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
   topics        CreateTopic[]
   comments      Comment[]
+  invests       Invest[]
 }
 
 model CreateTopic {
@@ -32,28 +33,44 @@ model CreateTopic {
   chainId         String
   comments        Comment[]
   metadata        Metadata?
+  invests         Invest[]
 }
 
 model Comment {
-  id        Int      @id @default(autoincrement())
+  id        Int          @id @default(autoincrement())
   content   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  author    User?    @relation(fields: [authorId], references: [id])
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  author    User?        @relation(fields: [authorId], references: [id])
   authorId  Int?
-  topic     CreateTopic?   @relation(fields: [topicId], references: [id])
+  topic     CreateTopic? @relation(fields: [topicId], references: [id])
   topicId   String?
 }
 
 model Metadata {
-  topicId       String @id
+  topicId       String      @id
   topic_title   String
   topic_content String
   image_url     String
-  topic         CreateTopic  @relation(fields: [topicId], references: [id])
+  topic         CreateTopic @relation(fields: [topicId], references: [id])
 }
 
 model EventSync {
   eventName String @id
   lastBlock BigInt
+}
+
+model Invest {
+  id              Int          @id @default(autoincrement())
+  userId          Int?
+  topicId         String?
+  amount          BigInt
+  position        Int
+  nonce           String
+  user            User?        @relation(fields: [userId], references: [id])
+  topic           CreateTopic? @relation(fields: [topicId], references: [id])
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  transactionHash String
+  chainId         String
 }

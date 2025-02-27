@@ -11,7 +11,7 @@ CREATE TABLE "User" (
 );
 
 -- CreateTable
-CREATE TABLE "Topic" (
+CREATE TABLE "CreateTopic" (
     "id" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -20,10 +20,10 @@ CREATE TABLE "Topic" (
     "position" INTEGER NOT NULL,
     "tokenAddress" TEXT NOT NULL,
     "nonce" TEXT NOT NULL,
-    "txnHash" TEXT,
+    "transactionHash" TEXT NOT NULL,
     "chainId" TEXT NOT NULL,
 
-    CONSTRAINT "Topic_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "CreateTopic_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -56,17 +56,39 @@ CREATE TABLE "EventSync" (
     CONSTRAINT "EventSync_pkey" PRIMARY KEY ("eventName")
 );
 
+-- CreateTable
+CREATE TABLE "Invest" (
+    "id" SERIAL NOT NULL,
+    "userId" INTEGER,
+    "topicId" TEXT,
+    "amount" BIGINT NOT NULL,
+    "position" INTEGER NOT NULL,
+    "nonce" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "transactionHash" TEXT NOT NULL,
+    "chainId" TEXT NOT NULL,
+
+    CONSTRAINT "Invest_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_walletAddress_key" ON "User"("walletAddress");
 
 -- AddForeignKey
-ALTER TABLE "Topic" ADD CONSTRAINT "Topic_promoterId_fkey" FOREIGN KEY ("promoterId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "CreateTopic" ADD CONSTRAINT "CreateTopic_promoterId_fkey" FOREIGN KEY ("promoterId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Comment" ADD CONSTRAINT "Comment_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Comment" ADD CONSTRAINT "Comment_topicId_fkey" FOREIGN KEY ("topicId") REFERENCES "Topic"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Comment" ADD CONSTRAINT "Comment_topicId_fkey" FOREIGN KEY ("topicId") REFERENCES "CreateTopic"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Metadata" ADD CONSTRAINT "Metadata_topicId_fkey" FOREIGN KEY ("topicId") REFERENCES "Topic"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Metadata" ADD CONSTRAINT "Metadata_topicId_fkey" FOREIGN KEY ("topicId") REFERENCES "CreateTopic"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Invest" ADD CONSTRAINT "Invest_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Invest" ADD CONSTRAINT "Invest_topicId_fkey" FOREIGN KEY ("topicId") REFERENCES "CreateTopic"("id") ON DELETE SET NULL ON UPDATE CASCADE;

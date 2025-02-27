@@ -120,5 +120,47 @@ const getTopicById = async (req, res) => {
     }
 }
 
+const invest = async (req, res) => {
+  const {investor, topicId, amount, position, nonce, chainId, transactionHash} = req.body;
 
-export  {getTopics, getTopicsByUser, getTopicById, createTopic};
+  const topic = await prisma.createTopic.findUnique({
+    where: { id: topicId },
+  });
+
+  if (!topic) {
+    return res.status(400).json({ error: "Topic does not exist" });
+  }
+
+  const user = await prisma.user.upsert({
+    where: { walletAddress: investor },
+    update: {},
+    create: { walletAddress: investor },
+  });
+
+  const investment = await prisma.invest.create({
+    data: {
+      investor: { connect: { id: user.id } },
+      topic: { connect: { id: topic.id } },
+      amount: BigInt(amount),
+      position,
+      nonce,
+      transactionHash,
+      chainId,
+    },
+  });
+
+  await prisma.createTopic.update({
+    where: { id: topic.id },
+    data: {
+      investment: BigInt(topic.investment) + BigInt(amount),
+    },
+  });
+
+  res.status(201).json({
+    investment,
+    message: "Investment created successfully",
+  });
+
+}
+
+export  {getTopics, getTopicsByUser, getTopicById, createTopic, invest};
