@@ -1,7 +1,7 @@
 import { contract, provider } from '../utils/provider.js';
 import axios from 'axios';
 
-const baseURL = process.env.base_url || 'http://localhost:5000';
+const baseURL = process.env.BASE_URL || 'http://localhost:5000';
 
 const listenToCreateTopic = async () => {
   contract.on('CreateTopic', async (promoter, topicId, investment, position, tokenAddress, nonce, event) => {
