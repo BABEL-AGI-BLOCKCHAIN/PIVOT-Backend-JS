@@ -163,4 +163,29 @@ const invest = async (req, res) => {
 
 }
 
-export  {getTopics, getTopicsByUser, getTopicById, createTopic, invest};
+const updateTopic = async (req, res) => {
+  const {topicId, topicTitle, topicContent, imageUrl, topicHash} = req.body;
+
+  const topic = await prisma.createTopic.findUnique({
+    where: { id: topicId },
+  });
+  
+  if (!topic) {
+    return res.status(400).json({ error: "Topic does not exist" });
+  }
+
+  const metadata = await prisma.metadata.upsert({
+    where: { id: topicId },
+    update: {},
+    create: { id: topicId, topicTitle, topicContent, imageUrl, topicHash },
+  });
+
+  res.status(201).json({
+    metadata,
+    message: "Metadata updated successfully",
+  });
+
+}
+
+
+export  {getTopics, getTopicsByUser, getTopicById, createTopic, invest, updateTopic};

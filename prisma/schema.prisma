@@ -48,11 +48,12 @@ model Comment {
 }
 
 model Metadata {
-  topicId       String      @id
-  topic_title   String
-  topic_content String
-  image_url     String
-  topic         CreateTopic @relation(fields: [topicId], references: [id])
+  topicId      String      @id
+  topicTitle   String
+  topicContent String
+  imageUrl     String
+  topicHash    String
+  topic        CreateTopic @relation(fields: [topicId], references: [id])
 }
 
 model EventSync {
