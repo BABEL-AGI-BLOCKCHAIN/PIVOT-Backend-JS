@@ -1,3 +1,4 @@
+import uploadOnHelia from "../utils/helia.js";
 import prisma from "../utils/prisma.js";
 
 
@@ -164,28 +165,30 @@ const invest = async (req, res) => {
 }
 
 const updateTopic = async (req, res) => {
-  const {topicId, topicTitle, topicContent, imageUrl, topicHash} = req.body;
+  const {topicId, topicTitle, topicContent, topicHash} = req.body;
 
-  const topic = await prisma.createTopic.findUnique({
-    where: { id: topicId },
-  });
-  
-  if (!topic) {
-    return res.status(400).json({ error: "Topic does not exist" });
+  const imageLocalPath = req.files?.image?.[0]?.path;
+  let imageUrl = null;
+  if (imageLocalPath) {
+    const uploadedImage = await uploadOnHelia(imageLocalPath);
+    imageUrl = uploadedImage;
   }
 
-  const metadata = await prisma.metadata.upsert({
-    where: { id: topicId },
-    update: {},
-    create: { id: topicId, topicTitle, topicContent, imageUrl, topicHash },
+  const metadata = await prisma.metadata.create({
+    data: {
+      topic: { connect: { id: topicId } },
+      topicTitle,
+      topicContent,
+      topicHash,
+      imageUrl,
+    },
   });
-
+  
   res.status(201).json({
     metadata,
     message: "Metadata updated successfully",
   });
 
 }
-
 
 export  {getTopics, getTopicsByUser, getTopicById, createTopic, invest, updateTopic};

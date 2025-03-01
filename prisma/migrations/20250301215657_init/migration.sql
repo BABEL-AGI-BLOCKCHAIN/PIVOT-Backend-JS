@@ -41,9 +41,10 @@ CREATE TABLE "Comment" (
 -- CreateTable
 CREATE TABLE "Metadata" (
     "topicId" TEXT NOT NULL,
-    "topic_title" TEXT NOT NULL,
-    "topic_content" TEXT NOT NULL,
-    "image_url" TEXT NOT NULL,
+    "topicTitle" TEXT NOT NULL,
+    "topicContent" TEXT NOT NULL,
+    "imageUrl" TEXT,
+    "topicHash" TEXT NOT NULL,
 
     CONSTRAINT "Metadata_pkey" PRIMARY KEY ("topicId")
 );

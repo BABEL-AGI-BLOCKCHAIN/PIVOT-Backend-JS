@@ -51,7 +51,7 @@ model Metadata {
   topicId      String      @id
   topicTitle   String
   topicContent String
-  imageUrl     String
+  imageUrl     String?
   topicHash    String
   topic        CreateTopic @relation(fields: [topicId], references: [id])
 }
