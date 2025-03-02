@@ -19,41 +19,47 @@ model User {
   invests       Invest[]
 }
 
+model Topic {
+  id          String       @id
+  comments    Comment[]
+  metadata    Metadata?
+  invests     Invest[]
+  createTopic CreateTopic?
+}
+
 model CreateTopic {
-  id              String    @id
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-  investment      BigInt    @default(0)
-  promoter        User?     @relation(fields: [promoterId], references: [id])
+  id              String   @id
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  investment      BigInt   @default(0)
+  promoter        User?    @relation(fields: [promoterId], references: [id])
   promoterId      Int?
   position        Int
   tokenAddress    String
   nonce           String
   transactionHash String
   chainId         String
-  comments        Comment[]
-  metadata        Metadata?
-  invests         Invest[]
-}
-
-model Comment {
-  id        Int          @id @default(autoincrement())
-  content   String
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
-  author    User?        @relation(fields: [authorId], references: [id])
-  authorId  Int?
-  topic     CreateTopic? @relation(fields: [topicId], references: [id])
-  topicId   String?
+  topic           Topic    @relation(fields: [id], references: [id])
 }
 
 model Metadata {
-  topicId      String      @id
+  topicId      String  @id
   topicTitle   String
   topicContent String
   imageUrl     String?
   topicHash    String
-  topic        CreateTopic @relation(fields: [topicId], references: [id])
+  topic        Topic   @relation(fields: [topicId], references: [id])
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  author    User?    @relation(fields: [authorId], references: [id])
+  authorId  Int?
+  topic     Topic?   @relation(fields: [topicId], references: [id])
+  topicId   String?
 }
 
 model EventSync {
@@ -62,16 +68,16 @@ model EventSync {
 }
 
 model Invest {
-  id              Int          @id @default(autoincrement())
+  id              Int      @id @default(autoincrement())
   userId          Int?
   topicId         String?
   amount          BigInt
   position        Int
   nonce           String
-  user            User?        @relation(fields: [userId], references: [id])
-  topic           CreateTopic? @relation(fields: [topicId], references: [id])
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
+  user            User?    @relation(fields: [userId], references: [id])
+  topic           Topic?   @relation(fields: [topicId], references: [id])
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
   transactionHash String
   chainId         String
 }
