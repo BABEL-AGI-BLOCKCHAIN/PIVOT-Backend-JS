@@ -1,6 +1,5 @@
 import fsPromises from 'fs/promises';
-import { createHelia } from 'helia';
-import { unixfs } from '@helia/unixfs';
+import { create } from 'ipfs-http-client';
 import path from 'path';
 
 async function uploadOnHelia(filePath) {
@@ -10,17 +9,15 @@ async function uploadOnHelia(filePath) {
 
   const normalizedPath = path.normalize(filePath).replace(/\\/g, '/');
 
-  const helia = await createHelia();
-  const ipfsFs = unixfs(helia);
-
+  const ipfs = create({ url: 'http://localhost:5001' });
+  
   const fileBuffer = await fsPromises.readFile(normalizedPath);
-  const uint8Array = new Uint8Array(fileBuffer);
 
-  const cid = await ipfsFs.addFile({ path: normalizedPath, content: uint8Array });
-
+  const result = await ipfs.add(fileBuffer);
+  
   await fsPromises.unlink(normalizedPath);
-
-  const url = `https://dweb.link/ipfs/${cid.toString()}`;
+  
+  const url = `http://localhost:8080/ipfs/${result.cid.toString()}`;
   return url;
 }
 
