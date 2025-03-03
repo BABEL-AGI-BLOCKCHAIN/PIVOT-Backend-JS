@@ -1,4 +1,4 @@
-import uploadOnHelia from "../utils/helia.js";
+import uploadOnPinata from "../utils/pinata.js";
 import prisma from "../utils/prisma.js";
 
 
@@ -201,7 +201,7 @@ const updateTopic = async (req, res) => {
     const imageLocalPath = req.files?.image?.[0]?.path;
     let imageUrl = null;
     if (imageLocalPath) {
-      const uploadedImage = await uploadOnHelia(imageLocalPath);
+      const uploadedImage = await uploadOnPinata(imageLocalPath);
       imageUrl = uploadedImage;
     }
 
