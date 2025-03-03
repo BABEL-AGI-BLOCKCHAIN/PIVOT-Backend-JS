@@ -69,13 +69,13 @@ model EventSync {
 
 model Invest {
   id              Int      @id @default(autoincrement())
-  userId          Int?
-  topicId         String?
+  investor        Int
+  topicId         String
   amount          BigInt
   position        Int
   nonce           String
-  user            User?    @relation(fields: [userId], references: [id])
-  topic           Topic?   @relation(fields: [topicId], references: [id])
+  user            User    @relation(fields: [investor], references: [id])
+  topic           Topic   @relation(fields: [topicId], references: [id])
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   transactionHash String

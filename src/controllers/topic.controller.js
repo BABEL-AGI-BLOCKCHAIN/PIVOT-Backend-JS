@@ -170,22 +170,27 @@ const invest = async (req, res) => {
 
   const investment = await prisma.invest.create({
     data: {
-      investor: { connect: { id: user.id } },
-      topicId: { connect: { id: topic.id } },
+      user: { connect: { id: user.id } }, 
+      topic: { connect: { id: topic.id } },
       amount: BigInt(amount),
       position,
       nonce,
       transactionHash,
       chainId,
     },
+    
   });
 
+  console.log(investment);
+
+  const updatedInvestment = BigInt(topic.investment) + BigInt(amount);
   await prisma.createTopic.update({
     where: { id: topic.id },
     data: {
-      investment: BigInt(topic.investment) + BigInt(amount),
+      investment: updatedInvestment,
     },
   });
+  
 
   res.status(201).json({
     investment,

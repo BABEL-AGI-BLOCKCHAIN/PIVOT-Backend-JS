@@ -67,8 +67,8 @@ CREATE TABLE "EventSync" (
 -- CreateTable
 CREATE TABLE "Invest" (
     "id" SERIAL NOT NULL,
-    "userId" INTEGER,
-    "topicId" TEXT,
+    "investor" INTEGER NOT NULL,
+    "topicId" TEXT NOT NULL,
     "amount" BIGINT NOT NULL,
     "position" INTEGER NOT NULL,
     "nonce" TEXT NOT NULL,
@@ -99,7 +99,7 @@ ALTER TABLE "Comment" ADD CONSTRAINT "Comment_authorId_fkey" FOREIGN KEY ("autho
 ALTER TABLE "Comment" ADD CONSTRAINT "Comment_topicId_fkey" FOREIGN KEY ("topicId") REFERENCES "Topic"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Invest" ADD CONSTRAINT "Invest_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Invest" ADD CONSTRAINT "Invest_investor_fkey" FOREIGN KEY ("investor") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Invest" ADD CONSTRAINT "Invest_topicId_fkey" FOREIGN KEY ("topicId") REFERENCES "Topic"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Invest" ADD CONSTRAINT "Invest_topicId_fkey" FOREIGN KEY ("topicId") REFERENCES "Topic"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

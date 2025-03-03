@@ -4,7 +4,8 @@ import { provider, contract } from "../utils/provider.js";
 const MAX_BLOCK_RANGE = 50000;
 const baseURL = process.env.BASE_URL || "http://localhost:5000";
 
-async function processHistoricTopics(eventName) {
+async function processHistoricTopics() {
+  const eventName = "CreateTopic";
     try {
       const getResponse = await axios.get(`${baseURL}/api/v1/event/getEventSync?eventName=${eventName}`);
       const lastBlock = getResponse.data.lastBlock;
