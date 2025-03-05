@@ -1,4 +1,8 @@
+import { Decimal } from '@prisma/client/runtime/library';
 import { contract, provider } from '../utils/provider.js'
+import axios from 'axios'
+
+const baseURL = 'https://localhost:5000' || process.env.BASE_URL;
 
 const listenToInvest = async () => {
     contract.on ('Invest', async (investor, topicId, amount, position, nonce, event) => {
@@ -9,7 +13,7 @@ const listenToInvest = async () => {
             await axios.post(`${baseURL}/api/v1/topic/invest`, {
                 investor,
                 topicId: topicId.toString(),
-                amount: BigInt(amount),
+                amount: Decimal(amount),
                 position: Number(position),
                 nonce: nonce.toString(),
                 transactionHash,

@@ -1,3 +1,4 @@
+import { Decimal } from "@prisma/client/runtime/library";
 import uploadOnPinata from "../utils/pinata.js";
 import prisma from "../utils/prisma.js";
 
@@ -38,7 +39,7 @@ const createTopic = async (req, res) => {
       const newCreateTopic = await tx.createTopic.create({
         data: {
           promoter: { connect: { id: user.id } },
-          investment: BigInt(investment),
+          investment: Decimal(investment),
           position,
           tokenAddress,
           nonce,
@@ -172,7 +173,7 @@ const invest = async (req, res) => {
     data: {
       user: { connect: { id: user.id } }, 
       topic: { connect: { id: topic.id } },
-      amount: BigInt(amount),
+      amount: Decimal(amount),
       position,
       nonce,
       transactionHash,
@@ -183,7 +184,7 @@ const invest = async (req, res) => {
 
   console.log(investment);
 
-  const updatedInvestment = BigInt(topic.investment) + BigInt(amount);
+  const updatedInvestment = Decimal(topic.investment) + Decimal(amount);
   await prisma.createTopic.update({
     where: { id: topic.id },
     data: {

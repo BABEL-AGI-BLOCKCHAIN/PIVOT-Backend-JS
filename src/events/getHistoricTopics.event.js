@@ -1,5 +1,6 @@
 import axios from "axios";
 import { provider, contract } from "../utils/provider.js";
+import { Decimal } from "@prisma/client/runtime/library";
 
 const MAX_BLOCK_RANGE = 50000;
 const baseURL = process.env.BASE_URL || "http://localhost:5000";
@@ -32,7 +33,7 @@ async function processHistoricTopics() {
             await axios.post(`${baseURL}/api/v1/topic/createTopic`, {
               promoter,
               topicId: topicId.toString(),
-              investment: BigInt(investment),
+              investment: Decimal(investment),
               position: Number(position),
               tokenAddress,
               nonce: nonce.toString(),

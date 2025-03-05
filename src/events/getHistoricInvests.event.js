@@ -1,5 +1,6 @@
 import axios from "axios";
 import { provider, contract } from "../utils/provider.js";
+import { Decimal } from "@prisma/client/runtime/library";
 
 const MAX_BLOCK_RANGE = 50000;
 const baseURL = process.env.BASE_URL || "http://localhost:5000";
@@ -33,7 +34,7 @@ async function processHistoricInvestEvents() {
           await axios.post(`${baseURL}/api/v1/topic/invest`, {
             investor,
             topicId: topicId.toString(),
-            amount: BigInt(amount),
+            amount: Decimal(amount),
             position: Number(position),
             nonce: nonce.toString(),
             transactionHash,
