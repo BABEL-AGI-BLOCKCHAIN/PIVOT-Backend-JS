@@ -2,12 +2,11 @@ import { Decimal } from '@prisma/client/runtime/library';
 import { contract, provider } from '../utils/provider.js'
 import axios from 'axios'
 
-const baseURL = 'https://localhost:5000' || process.env.BASE_URL;
+const baseURL = 'http://localhost:5000' || process.env.BASE_URL;
 
 const listenToInvest = async () => {
     contract.on ('Invest', async (investor, topicId, amount, position, nonce, event) => {
         try {
-            console.log (investor, topicId, amount, position, nonce);
             const transactionHash = await event.log.transactionHash;
             const { chainId } = await provider.getNetwork();
             await axios.post(`${baseURL}/api/v1/topic/invest`, {
