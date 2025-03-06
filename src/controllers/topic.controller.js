@@ -188,7 +188,7 @@ const invest = async (req, res) => {
   await prisma.createTopic.update({
     where: { id: topic.id },
     data: {
-      investment: updatedInvestment,
+      investment: Decimal(updatedInvestment),
     },
   });
   
