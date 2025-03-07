@@ -1,6 +1,6 @@
 import axios from "axios";
 import { provider, contract } from "../utils/provider.js";
-import { Decimal } from "@prisma/client/runtime/library";
+import { safeDecimal } from "../utils/validateDecimal.js";
 
 const MAX_BLOCK_RANGE = 50000;
 const baseURL = process.env.BASE_URL || "http://localhost:5000";
@@ -29,11 +29,12 @@ async function processHistoricTopics() {
           try {
             const { chainId } = await provider.getNetwork();
             const transactionHash = e.transactionHash || e.log.transactionHash;
+            const decimalInvestment = safeDecimal(investment);
       
             await axios.post(`${baseURL}/api/v1/topic/createTopic`, {
               promoter,
               topicId: topicId.toString(),
-              investment: Decimal(investment),
+              investment: decimalInvestment,
               position: Number(position),
               tokenAddress,
               nonce: nonce.toString(),

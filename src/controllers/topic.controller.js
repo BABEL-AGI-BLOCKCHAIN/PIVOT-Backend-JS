@@ -1,34 +1,34 @@
-import { Decimal } from "@prisma/client/runtime/library";
 import uploadOnPinata from "../utils/pinata.js";
 import prisma from "../utils/prisma.js";
-
+import {safeDecimal} from "../utils/validateDecimal.js";
 
 const createTopic = async (req, res) => {
   try {
-    const {
-      topicId, promoter, investment, position, tokenAddress, nonce, chainId, transactionHash } = req.body;
-  
+    const { topicId, promoter, investment, position, tokenAddress, nonce, chainId, transactionHash } = req.body;
+
     const user = await prisma.user.upsert({
       where: { walletAddress: promoter },
       update: {},
       create: { walletAddress: promoter },
     });
-  
+
     if (!user) {
       return res.status(400).json({ error: "Promoter does not exist" });
     }
-  
+
     const existingTopic = await prisma.topic.findUnique({
       where: { id: topicId },
     });
-  
+
     if (existingTopic) {
       return res.status(200).json({
         message: "Topic already exists",
         topic: existingTopic,
       });
     }
-  
+
+    const decimalInvestment = safeDecimal(investment);
+
     const result = await prisma.$transaction(async (tx) => {
       const newTopic = await tx.topic.create({
         data: {
@@ -39,7 +39,7 @@ const createTopic = async (req, res) => {
       const newCreateTopic = await tx.createTopic.create({
         data: {
           promoter: { connect: { id: user.id } },
-          investment: Decimal(investment),
+          investment: decimalInvestment,
           position,
           tokenAddress,
           nonce,
@@ -48,10 +48,10 @@ const createTopic = async (req, res) => {
           topic: { connect: { id: topicId } },
         },
       });
-  
+
       return { newTopic, newCreateTopic };
     });
-  
+
     res.status(201).json({
       topic: result.newTopic,
       createTopic: result.newCreateTopic,
@@ -153,52 +153,61 @@ const getTopicById = async (req, res) => {
 };
 
 const invest = async (req, res) => {
-  const {investor, topicId, amount, position, nonce, chainId, transactionHash} = req.body;
+  try {
+    const { investor, topicId, amount, position, nonce, chainId, transactionHash } = req.body;
 
-  const topic = await prisma.createTopic.findUnique({
-    where: { id: topicId },
-  });
+    const topic = await prisma.createTopic.findUnique({
+      where: { id: topicId },
+    });
 
-  if (!topic) {
-    return res.status(400).json({ error: "Topic does not exist" });
+    if (!topic) {
+      return res.status(400).json({ error: "Topic does not exist" });
+    }
+
+    const user = await prisma.user.upsert({
+      where: { walletAddress: investor },
+      update: {},
+      create: { walletAddress: investor },
+    });
+
+    const decimalAmount = safeDecimal(amount);
+
+    const investment = await prisma.invest.create({
+      data: {
+        user: { connect: { id: user.id } },
+        topic: { connect: { id: topic.id } },
+        amount: decimalAmount,
+        position,
+        nonce,
+        transactionHash,
+        chainId,
+      },
+    });
+
+    const currentInvestment = safeDecimal(topic.investment);
+    const updatedInvestment = currentInvestment.plus(decimalAmount);
+
+    if (!updatedInvestment.isFinite()) {
+      return res.status(400).json({ error: "Resulting investment is invalid" });
+    }
+
+    await prisma.createTopic.update({
+      where: { id: topic.id },
+      data: {
+        investment: updatedInvestment,
+      },
+    });
+
+    res.status(201).json({
+      investment,
+      message: "Investment created successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: error.message || "Internal server error",
+    });
   }
-
-  const user = await prisma.user.upsert({
-    where: { walletAddress: investor },
-    update: {},
-    create: { walletAddress: investor },
-  });
-
-  const investment = await prisma.invest.create({
-    data: {
-      user: { connect: { id: user.id } }, 
-      topic: { connect: { id: topic.id } },
-      amount: Decimal(amount),
-      position,
-      nonce,
-      transactionHash,
-      chainId,
-    },
-    
-  });
-
-  console.log(investment);
-
-  const updatedInvestment = Decimal(topic.investment) + Decimal(amount);
-  await prisma.createTopic.update({
-    where: { id: topic.id },
-    data: {
-      investment: Decimal(updatedInvestment),
-    },
-  });
-  
-
-  res.status(201).json({
-    investment,
-    message: "Investment created successfully",
-  });
-
-}
+};
 
 const updateTopic = async (req, res) => {
   try {

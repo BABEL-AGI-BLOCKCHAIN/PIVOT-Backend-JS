@@ -1,6 +1,6 @@
-import { Decimal } from '@prisma/client/runtime/library';
 import { contract, provider } from '../utils/provider.js'
 import axios from 'axios'
+import { safeDecimal } from '../utils/validateDecimal.js';
 
 const baseURL = 'http://localhost:5000' || process.env.BASE_URL;
 
@@ -9,10 +9,11 @@ const listenToInvest = async () => {
         try {
             const transactionHash = await event.log.transactionHash;
             const { chainId } = await provider.getNetwork();
+            const decimalAmount = safeDecimal(amount);
             await axios.post(`${baseURL}/api/v1/topic/invest`, {
                 investor,
                 topicId: topicId.toString(),
-                amount: Decimal(amount),
+                amount: decimalAmount,
                 position: Number(position),
                 nonce: nonce.toString(),
                 transactionHash,
