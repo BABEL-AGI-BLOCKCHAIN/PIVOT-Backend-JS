@@ -27,7 +27,6 @@ async function processHistoricInvestEvents() {
       for (const e of events) {
         const { investor, topicId, amount, position, nonce } = e.args;
         try {
-          console.log (investor, topicId, amount, position, nonce);
           const { chainId } = await provider.getNetwork();
           const transactionHash = e.transactionHash || e.log.transactionHash;
           const decimalAmount = safeDecimal(amount);

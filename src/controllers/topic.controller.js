@@ -1,6 +1,7 @@
 import uploadOnPinata from "../utils/pinata.js";
 import prisma from "../utils/prisma.js";
 import {safeDecimal} from "../utils/validateDecimal.js";
+import { provider } from "../utils/provider.js";
 
 const createTopic = async (req, res) => {
   try {
@@ -33,12 +34,14 @@ const createTopic = async (req, res) => {
       const newTopic = await tx.topic.create({
         data: {
           id: topicId,
+          totalInvestment: decimalInvestment,
+          currentPosition: position+1,
         },
       });
 
       const newCreateTopic = await tx.createTopic.create({
         data: {
-          promoter: { connect: { id: user.id } },
+          promoter: { connect: { walletAddress: user.walletAddress } },
           investment: decimalInvestment,
           position,
           tokenAddress,
@@ -93,11 +96,11 @@ const getTopics = async (_, res) => {
 
 const getTopicsByUser = async (req, res) => {
   try {
-    const userId = parseInt(req.params.userId);
+    const userId = req.params.userId;
     const topics = await prisma.topic.findMany({
       where: {
         createTopic: {
-          promoterId: userId, // filtering on the promoterId from CreateTopic
+          promoterId: userId,
         },
       },
       include: {
@@ -172,15 +175,18 @@ const invest = async (req, res) => {
 
     const decimalAmount = safeDecimal(amount);
 
+    const blockNumber = BigInt(await provider.getBlockNumber());
+
     const investment = await prisma.invest.create({
       data: {
-        user: { connect: { id: user.id } },
+        user: { connect: { walletAddress: user.walletAddress } },
         topic: { connect: { id: topic.id } },
         amount: decimalAmount,
         position,
         nonce,
         transactionHash,
         chainId,
+        blockNumber,
       },
     });
 
@@ -191,10 +197,11 @@ const invest = async (req, res) => {
       return res.status(400).json({ error: "Resulting investment is invalid" });
     }
 
-    await prisma.createTopic.update({
+    await prisma.topic.update({
       where: { id: topic.id },
       data: {
-        investment: updatedInvestment,
+        totalInvestment: updatedInvestment,
+        currentPosition: position+1,
       },
     });
 

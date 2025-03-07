@@ -8,8 +8,7 @@ datasource db {
 }
 
 model User {
-  id            Int           @id @default(autoincrement())
-  walletAddress String        @unique
+  walletAddress String        @id @unique
   username      String?
   twitterHandle String?
   createdAt     DateTime      @default(now())
@@ -20,20 +19,23 @@ model User {
 }
 
 model Topic {
-  id          String       @id
-  comments    Comment[]
-  metadata    Metadata?
-  invests     Invest[]
-  createTopic CreateTopic?
+  id              String       @id
+  totalInvestment Decimal      @default(0) @db.Decimal(80, 18)
+  currentPosition Int
+  comments        Comment[]
+  metadata        Metadata?
+  invests         Invest[]
+  createTopic     CreateTopic?
+
 }
 
 model CreateTopic {
   id              String   @id
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
-  investment      Decimal   @default(0) @db.Decimal(80, 18)
-  promoter        User?    @relation(fields: [promoterId], references: [id])
-  promoterId      Int?
+  investment      Decimal  @default(0) @db.Decimal(80, 18)
+  promoter        User    @relation(fields: [promoterId], references: [walletAddress])
+  promoterId      String
   position        Int
   tokenAddress    String
   nonce           String
@@ -56,28 +58,30 @@ model Comment {
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  author    User?    @relation(fields: [authorId], references: [id])
-  authorId  Int?
+  author    User    @relation(fields: [authorId], references: [walletAddress])
+  authorId  String
   topic     Topic?   @relation(fields: [topicId], references: [id])
   topicId   String?
+}
+
+
+model Invest {
+  id              Int      @id @default(autoincrement())
+  investor        String
+  topicId         String
+  amount          Decimal  @db.Decimal(80, 18)
+  position        Int
+  nonce           String
+  user            User     @relation(fields: [investor], references: [walletAddress])
+  topic           Topic    @relation(fields: [topicId], references: [id])
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  transactionHash String
+  chainId         String
+  blockNumber     BigInt
 }
 
 model EventSync {
   eventName String @id
   lastBlock BigInt
-}
-
-model Invest {
-  id              Int      @id @default(autoincrement())
-  investor        Int
-  topicId         String
-  amount          Decimal @db.Decimal(80, 18)
-  position        Int
-  nonce           String
-  user            User    @relation(fields: [investor], references: [id])
-  topic           Topic   @relation(fields: [topicId], references: [id])
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  transactionHash String
-  chainId         String
 }
