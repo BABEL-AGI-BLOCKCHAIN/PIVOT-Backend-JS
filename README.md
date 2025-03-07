@@ -2,6 +2,13 @@
 
 First, change the .env.example to .env and set the variables and then run the development server:
 
+Using Docker
+```bash
+Docker compose up --build
+```
+
+OR
+
 setup postgres in your machine and then
 
 To connect to pg server or after any change in the prisma.schema file
