@@ -36,6 +36,8 @@ const createTopic = async (req, res) => {
           id: topicId,
           totalInvestment: decimalInvestment,
           currentPosition: position+1,
+          commentCount: 0,
+          investorCount: 1,
         },
       });
 
@@ -67,25 +69,123 @@ const createTopic = async (req, res) => {
   }
 };
 
-const getTopics = async (_, res) => {
+const comment = async (req, res) => {
   try {
+    const { userId, topicId, comment } = req.body;
+    const user = await prisma.user.upsert({
+      where: { walletAddress: userId },
+      update: {},
+      create: { walletAddress: userId },
+    });
+    if (!user) {
+      return res.status(400).json({ error: "User does not exist" });
+    }
+    const topic = await prisma.topic.findUnique({
+      where: { id: topicId },
+    });
+
+    if (!topic) {
+      return res.status(400).json({ error: "Topic does not exist" });
+    };
+
+    const newComment = await prisma.comment.create({
+      data: {
+        user: { connect: { walletAddress: user.walletAddress } },
+        topic: { connect: { id: topicId } },
+        comment,
+      },
+    });
+
+    await prisma.topic.update({
+      where: { id: topicId },
+      commentCount: {
+        increment: 1,
+      },
+    });
+
+    res.status(201).json({
+      comment: newComment,
+      message: "Comment created successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: error.message || "Internal server error",
+    });
+  }
+};
+
+const getTopics = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 10;
+    const skip = (page - 1) * limit;
+
+    let sortField = req.query.sortField || 'createdAt'; 
+    const sortOrder = req.query.sortOrder === 'asc' ? 'asc' : 'desc';
+
+    const allowedFields = ['createdAt', 'totalInvestment', 'commentCount', 'investorCount'];
+    if (!allowedFields.includes(sortField)) {
+      sortField = 'createdAt';
+    }
+
     const topics = await prisma.topic.findMany({
+      skip,
+      take: limit,
       include: {
         createTopic: true,
         metadata: true,
-        comments: true,
-        invests: true,
       },
       orderBy: {
-        createTopic: {
-          createdAt: 'asc'
-        }
+        [sortField]: sortOrder,
       }
+      
     });
+
+    const totalTopics = await prisma.topic.count();
 
     res.status(200).json({
       topics,
+      pagination: {
+        totalTopics,
+        currentPage: page,
+        totalPages: Math.ceil(totalTopics / limit),
+      },
       message: "Topics retrieved successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: error.message || "Internal server error",
+    });
+  }
+};
+
+const getComments = async (req, res) => {
+  try {
+    const topicId = req.params.topicId;
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 10;
+    const skip = (page - 1) * limit;
+
+    const comments = await prisma.comment.findMany({
+      where: { topicId },
+      include: { user: true },
+      orderBy: { createdAt: 'desc' },
+      skip,
+      take: limit,
+    });
+
+    const totalComments = await prisma.comment.count({
+      where: { topicId },
+    });
+
+    res.status(200).json({
+      comments,
+      pagination: {
+        totalComments,
+        currentPage: page,
+        totalPages: Math.ceil(totalComments / limit),
+      },
+      message: "Comments retrieved successfully",
     });
   } catch (error) {
     res.status(500).json({
@@ -97,6 +197,10 @@ const getTopics = async (_, res) => {
 const getTopicsByUser = async (req, res) => {
   try {
     const userId = req.params.userId;
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 10;
+    const skip = (page - 1) * limit;
+
     const topics = await prisma.topic.findMany({
       where: {
         createTopic: {
@@ -106,18 +210,31 @@ const getTopicsByUser = async (req, res) => {
       include: {
         createTopic: true,
         metadata: true,
-        comments: true,
-        invests: true,
       },
       orderBy: {
         createTopic: {
           createdAt: 'asc',
         },
       },
+      skip,
+      take: limit,
     });
-    
+
+    const totalTopics = await prisma.topic.count({
+      where: {
+        createTopic: {
+          promoterId: userId,
+        },
+      },
+    });
+
     res.status(200).json({
       topics,
+      pagination: {
+        totalTopics,
+        currentPage: page,
+        totalPages: Math.ceil(totalTopics / limit),
+      },
       message: "Topics retrieved successfully",
     });
   } catch (error) {
@@ -135,8 +252,6 @@ const getTopicById = async (req, res) => {
       include: {
         createTopic: true,
         metadata: true,
-        comments: true,
-        invests: true,
       },
     });
     
@@ -202,6 +317,9 @@ const invest = async (req, res) => {
       data: {
         totalInvestment: updatedInvestment,
         currentPosition: position+1,
+        investorCount: {
+          increment: 1,
+        },
       },
     });
 
@@ -263,4 +381,4 @@ const updateTopic = async (req, res) => {
   }
 };
 
-export  {getTopics, getTopicsByUser, getTopicById, createTopic, invest, updateTopic};
+export  {getTopics, getTopicsByUser, getTopicById, createTopic, invest, updateTopic, getComments, comment};

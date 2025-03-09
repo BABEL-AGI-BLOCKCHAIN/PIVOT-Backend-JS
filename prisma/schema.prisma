@@ -22,11 +22,14 @@ model Topic {
   id              String       @id
   totalInvestment Decimal      @default(0) @db.Decimal(80, 18)
   currentPosition Int
+  investorCount   Int
+  commentCount    Int
   comments        Comment[]
   metadata        Metadata?
   invests         Invest[]
   createTopic     CreateTopic?
-
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
 }
 
 model CreateTopic {
