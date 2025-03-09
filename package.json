@@ -1,7 +1,8 @@
 {
   "type": "module",
   "scripts": {
-    "dev": "nodemon src/index.js"
+    "dev": "nodemon src/index.js",
+    "migrate": "env-cmd -f .env.local npx prisma migrate dev --name init --skip-seed"
   },
   "dependencies": {
     "@prisma/client": "^6.4.0",
@@ -17,5 +18,8 @@
     "nodemon": "^3.1.9",
     "path": "^0.12.7",
     "prisma": "^6.4.0"
+  },
+  "devDependencies": {
+    "env-cmd": "^10.1.0"
   }
 }

@@ -4,6 +4,7 @@ First, change the .env.example to .env and set the variables and then run the de
 
 Using Docker
 ```bash
+npm run migrate
 Docker compose up --build
 ```
 
