@@ -3,6 +3,7 @@ CREATE TABLE "User" (
     "walletAddress" TEXT NOT NULL,
     "username" TEXT,
     "twitterHandle" TEXT,
+    "avatar" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -42,7 +43,7 @@ CREATE TABLE "Metadata" (
     "topicId" TEXT NOT NULL,
     "topicTitle" TEXT NOT NULL,
     "topicContent" TEXT NOT NULL,
-    "imageUrl" TEXT,
+    "mediaCID" TEXT,
     "topicHash" TEXT NOT NULL,
 
     CONSTRAINT "Metadata_pkey" PRIMARY KEY ("topicId")

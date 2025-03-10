@@ -11,6 +11,7 @@ model User {
   walletAddress String        @id @unique
   username      String?
   twitterHandle String?
+  avatar        String?
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
   topics        CreateTopic[]
@@ -50,7 +51,7 @@ model Metadata {
   topicId      String  @id
   topicTitle   String
   topicContent String
-  imageUrl     String?
+  mediaCID     String?
   topicHash    String
   topic        Topic   @relation(fields: [topicId], references: [id])
 }
