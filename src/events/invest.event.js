@@ -10,6 +10,10 @@ const listenToInvest = async () => {
             const transactionHash = await event.log.transactionHash;
             const { chainId } = await provider.getNetwork();
             const decimalAmount = safeDecimal(amount);
+            const block = await provider.getBlock(event.blockNumber);
+            
+            const blockTimeStamp = new Date(block.timestamp * 1000);
+
             await axios.post(`${baseURL}/api/v1/topic/invest`, {
                 investor,
                 topicId: topicId.toString(),
@@ -18,6 +22,7 @@ const listenToInvest = async () => {
                 nonce: nonce.toString(),
                 transactionHash,
                 chainId: chainId.toString(),
+                blockTimeStamp,
             });
         } catch (error) {
             console.error(

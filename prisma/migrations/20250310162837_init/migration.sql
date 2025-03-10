@@ -16,6 +16,9 @@ CREATE TABLE "Topic" (
     "currentPosition" INTEGER NOT NULL,
     "investorCount" INTEGER NOT NULL,
     "commentCount" INTEGER NOT NULL,
+    "blockTimeStamp" TIMESTAMP(3) NOT NULL,
+    "transactionHash" TEXT NOT NULL,
+    "chainId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -25,15 +28,11 @@ CREATE TABLE "Topic" (
 -- CreateTable
 CREATE TABLE "CreateTopic" (
     "id" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
     "investment" DECIMAL(80,18) NOT NULL DEFAULT 0,
     "promoterId" TEXT NOT NULL,
     "position" INTEGER NOT NULL,
     "tokenAddress" TEXT NOT NULL,
     "nonce" TEXT NOT NULL,
-    "transactionHash" TEXT NOT NULL,
-    "chainId" TEXT NOT NULL,
 
     CONSTRAINT "CreateTopic_pkey" PRIMARY KEY ("id")
 );
@@ -73,7 +72,7 @@ CREATE TABLE "Invest" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "transactionHash" TEXT NOT NULL,
     "chainId" TEXT NOT NULL,
-    "blockNumber" BIGINT NOT NULL,
+    "blockTimeStamp" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Invest_pkey" PRIMARY KEY ("id")
 );

@@ -1,11 +1,10 @@
 import uploadOnPinata from "../utils/pinata.js";
 import prisma from "../utils/prisma.js";
 import {safeDecimal} from "../utils/validateDecimal.js";
-import { provider } from "../utils/provider.js";
 
 const createTopic = async (req, res) => {
   try {
-    const { topicId, promoter, investment, position, tokenAddress, nonce, chainId, transactionHash } = req.body;
+    const { topicId, promoter, investment, position, tokenAddress, nonce, chainId, transactionHash, blockTimeStamp } = req.body;
 
     const user = await prisma.user.upsert({
       where: { walletAddress: promoter },
@@ -38,6 +37,9 @@ const createTopic = async (req, res) => {
           currentPosition: position+1,
           commentCount: 0,
           investorCount: 1,
+          transactionHash,
+          chainId,
+          blockTimeStamp,
         },
       });
 
@@ -48,8 +50,6 @@ const createTopic = async (req, res) => {
           position,
           tokenAddress,
           nonce,
-          transactionHash,
-          chainId,
           topic: { connect: { id: topicId } },
         },
       });
@@ -123,9 +123,9 @@ const getTopics = async (req, res) => {
     let sortField = req.query.sortField || 'createdAt'; 
     const sortOrder = req.query.sortOrder === 'asc' ? 'asc' : 'desc';
 
-    const allowedFields = ['createdAt', 'totalInvestment', 'commentCount', 'investorCount'];
+    const allowedFields = ['blockTimeStamp', 'totalInvestment', 'commentCount', 'investorCount'];
     if (!allowedFields.includes(sortField)) {
-      sortField = 'createdAt';
+      sortField = 'blockTimeStamp';
     }
 
     const topics = await prisma.topic.findMany({
@@ -137,8 +137,7 @@ const getTopics = async (req, res) => {
       },
       orderBy: {
         [sortField]: sortOrder,
-      }
-      
+      },
     });
 
     const totalTopics = await prisma.topic.count();
@@ -272,7 +271,7 @@ const getTopicById = async (req, res) => {
 
 const invest = async (req, res) => {
   try {
-    const { investor, topicId, amount, position, nonce, chainId, transactionHash } = req.body;
+    const { investor, topicId, amount, position, nonce, chainId, transactionHash, blockTimeStamp } = req.body;
 
     const topic = await prisma.createTopic.findUnique({
       where: { id: topicId },
@@ -290,8 +289,6 @@ const invest = async (req, res) => {
 
     const decimalAmount = safeDecimal(amount);
 
-    const blockNumber = BigInt(await provider.getBlockNumber());
-
     const investment = await prisma.invest.create({
       data: {
         user: { connect: { walletAddress: user.walletAddress } },
@@ -301,7 +298,7 @@ const invest = async (req, res) => {
         nonce,
         transactionHash,
         chainId,
-        blockNumber,
+        blockTimeStamp,
       },
     });
 

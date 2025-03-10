@@ -30,6 +30,9 @@ async function processHistoricTopics() {
             const { chainId } = await provider.getNetwork();
             const transactionHash = e.transactionHash || e.log.transactionHash;
             const decimalInvestment = safeDecimal(investment);
+            const block = await provider.getBlock(e.blockNumber);
+      
+            const blockTimeStamp = new Date(block.timestamp * 1000);
       
             await axios.post(`${baseURL}/api/v1/topic/createTopic`, {
               promoter,
@@ -40,6 +43,7 @@ async function processHistoricTopics() {
               nonce: nonce.toString(),
               transactionHash,
               chainId: chainId.toString(),
+              blockTimeStamp,
             });
           } catch (error) {
             console.error(`Error processing event:`, error.response ? error.response.data : error.message);

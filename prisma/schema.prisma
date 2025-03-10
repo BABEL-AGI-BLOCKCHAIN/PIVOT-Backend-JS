@@ -24,6 +24,9 @@ model Topic {
   currentPosition Int
   investorCount   Int
   commentCount    Int
+  blockTimeStamp  DateTime
+  transactionHash  String
+  chainId         String
   comments        Comment[]
   metadata        Metadata?
   invests         Invest[]
@@ -33,18 +36,14 @@ model Topic {
 }
 
 model CreateTopic {
-  id              String   @id
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  investment      Decimal  @default(0) @db.Decimal(80, 18)
-  promoter        User    @relation(fields: [promoterId], references: [walletAddress])
-  promoterId      String
-  position        Int
-  tokenAddress    String
-  nonce           String
-  transactionHash String
-  chainId         String
-  topic           Topic    @relation(fields: [id], references: [id])
+  id           String  @id
+  investment   Decimal @default(0) @db.Decimal(80, 18)
+  promoter     User    @relation(fields: [promoterId], references: [walletAddress])
+  promoterId   String
+  position     Int
+  tokenAddress String
+  nonce        String
+  topic        Topic   @relation(fields: [id], references: [id])
 }
 
 model Metadata {
@@ -61,12 +60,11 @@ model Comment {
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  author    User    @relation(fields: [authorId], references: [walletAddress])
+  author    User     @relation(fields: [authorId], references: [walletAddress])
   authorId  String
   topic     Topic?   @relation(fields: [topicId], references: [id])
   topicId   String?
 }
-
 
 model Invest {
   id              Int      @id @default(autoincrement())
@@ -81,7 +79,7 @@ model Invest {
   updatedAt       DateTime @updatedAt
   transactionHash String
   chainId         String
-  blockNumber     BigInt
+  blockTimeStamp  DateTime
 }
 
 model EventSync {

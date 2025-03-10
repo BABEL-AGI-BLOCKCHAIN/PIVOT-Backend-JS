@@ -30,6 +30,9 @@ async function processHistoricInvestEvents() {
           const { chainId } = await provider.getNetwork();
           const transactionHash = e.transactionHash || e.log.transactionHash;
           const decimalAmount = safeDecimal(amount);
+          const block = await provider.getBlock(e.blockNumber);
+      
+          const blockTimeStamp = new Date(block.timestamp * 1000);
           
           await axios.post(`${baseURL}/api/v1/topic/invest`, {
             investor,
@@ -39,6 +42,7 @@ async function processHistoricInvestEvents() {
             nonce: nonce.toString(),
             transactionHash,
             chainId: chainId.toString(),
+            blockTimeStamp,
           });
         } catch (error) {
           console.error(

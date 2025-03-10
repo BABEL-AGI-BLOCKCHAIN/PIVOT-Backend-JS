@@ -10,6 +10,9 @@ const listenToCreateTopic = async () => {
       const { chainId } = await provider.getNetwork();
       const transactionHash = await event.log.transactionHash;
       const decimalInvestment = safeDecimal(investment);
+      const block = await provider.getBlock(event.blockNumber);
+      
+      const blockTimeStamp = new Date(block.timestamp * 1000);
 
       await axios.post(`${baseURL}/api/v1/topic/createTopic`, {
         promoter,
@@ -20,6 +23,7 @@ const listenToCreateTopic = async () => {
         nonce: nonce.toString(),
         transactionHash,
         chainId: chainId.toString(),
+        blockTimeStamp,
       });
     } catch (error) {
       console.error(
