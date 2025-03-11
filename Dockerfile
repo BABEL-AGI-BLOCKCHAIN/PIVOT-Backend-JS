@@ -10,4 +10,6 @@ COPY . .
 
 EXPOSE 5000
 
-CMD ["node", "src/index.js"]
+# CMD ["node", "src/index.js"]
+
+CMD sh -c "npx prisma migrate deploy && npx prisma generate && npm run dev"
