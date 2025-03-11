@@ -1,5 +1,6 @@
 import { contract, provider } from '../utils/provider.js';
 import axios from 'axios';
+import { safeDecimal } from '../utils/validateDecimal.js';
 
 const baseURL = process.env.BASE_URL || 'http://localhost:5000';
 
@@ -8,16 +9,21 @@ const listenToCreateTopic = async () => {
     try {
       const { chainId } = await provider.getNetwork();
       const transactionHash = await event.log.transactionHash;
+      const decimalInvestment = safeDecimal(investment);
+      const block = await provider.getBlock(event.blockNumber);
+      
+      const blockTimeStamp = new Date(block.timestamp * 1000);
 
       await axios.post(`${baseURL}/api/v1/topic/createTopic`, {
         promoter,
         topicId: topicId.toString(),
-        investment: BigInt(investment),
+        investment: decimalInvestment,
         position: Number(position),
         tokenAddress,
         nonce: nonce.toString(),
         transactionHash,
         chainId: chainId.toString(),
+        blockTimeStamp,
       });
     } catch (error) {
       console.error(
