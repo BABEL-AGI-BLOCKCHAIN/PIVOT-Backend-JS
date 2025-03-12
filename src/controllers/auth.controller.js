@@ -38,4 +38,20 @@ const signIn = async (req, res) => {
     }
 }
 
-export default signIn;
+const twitterSuccess = (req, res) => {
+    res.status(200).json({
+        success: true,
+        message: 'Twitter authentication successful',
+        user: req.user,
+    });
+};
+  
+const twitterFailure = (req, res) => {
+    res.status(401).json({
+        success: false,
+        message: 'Twitter authentication failed',
+    });
+};
+  
+
+export { signIn, twitterSuccess, twitterFailure };
