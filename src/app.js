@@ -21,6 +21,11 @@ app.use(
     })
 );
 
+import setupSwagger from './utils/swaggerConfig.js';
+if (process.env.NODE_ENV !== "production") {
+  setupSwagger(app);
+}
+
 
 import passport from './utils/passport.js';
 app.use(passport.initialize());
