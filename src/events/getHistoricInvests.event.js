@@ -8,7 +8,11 @@ const baseURL = process.env.BASE_URL || "http://localhost:5000";
 async function processHistoricInvestEvents() {
   const eventName = "Invest";
   try {
-    const getResponse = await axios.get(`${baseURL}/api/v1/event/getEventSync?eventName=${eventName}`);
+    const getResponse = await axios.get(`${baseURL}/api/v1/event/getEventSync?eventName=${eventName}`, {
+      headers: {
+          'internal-secret': process.env.INTERNAL_SECRET,
+      }
+  });
     const lastBlock = getResponse.data.lastBlock;
     
     const currentBlock = await provider.getBlockNumber();
@@ -43,7 +47,11 @@ async function processHistoricInvestEvents() {
             transactionHash,
             chainId: chainId.toString(),
             blockTimeStamp,
-          });
+          }, {
+            headers: {
+                'internal-secret': process.env.INTERNAL_SECRET,
+            }
+        });
         } catch (error) {
           console.error(
             "Error processing invest event:",
@@ -55,7 +63,11 @@ async function processHistoricInvestEvents() {
       try {
         await axios.post(`${baseURL}/api/v1/event/updateEventSync?eventName=${eventName}`, {
           blockNumber: BigInt(endBlock),
-        });
+        }, {
+          headers: {
+              'internal-secret': process.env.INTERNAL_SECRET,
+          }
+      });
       } catch (error) {
         console.error(
           "Error updating event sync:",
