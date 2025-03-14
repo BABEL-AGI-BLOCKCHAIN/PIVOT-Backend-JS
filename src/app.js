@@ -45,5 +45,7 @@ app.use ('/api/v1/topic', topicRouter);
 import eventRouter from './routes/event.route.js';
 app.use ('/api/v1/event', eventRouter);
 
+import investRouter from './routes/invest.route.js';
+app.use ('/api/v1/topic', investRouter);
 
 export default app;

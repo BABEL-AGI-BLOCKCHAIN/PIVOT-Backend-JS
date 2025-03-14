@@ -198,57 +198,6 @@
         }
       }
     },
-    "/invest": {
-      "post": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "investor": {
-                  "example": "any"
-                },
-                "topicId": {
-                  "example": "any"
-                },
-                "amount": {
-                  "example": "any"
-                },
-                "position": {
-                  "example": "any"
-                },
-                "nonce": {
-                  "example": "any"
-                },
-                "chainId": {
-                  "example": "any"
-                },
-                "transactionHash": {
-                  "example": "any"
-                },
-                "blockTimeStamp": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Created"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
     "/updateTopic": {
       "post": {
         "description": "",
@@ -345,64 +294,6 @@
         "responses": {
           "201": {
             "description": "Created"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/getEventSync": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "eventName",
-            "in": "query",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/updateEventSync": {
-      "post": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "eventName",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "blockNumber": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
           },
           "400": {
             "description": "Bad Request"

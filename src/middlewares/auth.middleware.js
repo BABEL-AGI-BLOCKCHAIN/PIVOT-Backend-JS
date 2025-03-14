@@ -30,5 +30,14 @@ const verifyJWT = async (req, _ , next) => {
 };
 
 
+const internalAuthMiddleware = (req, res, next) => {
+    const secret = req.headers['internal-secret'];
 
-export default verifyJWT;
+    if (!secret || secret !== process.env.INTERNAL_SECRET) {
+        return res.status(403).json({ message: 'Forbidden' });
+    }
+
+    next();
+};
+
+export { verifyJWT, internalAuthMiddleware };
