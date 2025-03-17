@@ -22,12 +22,11 @@
     "passport": "^0.7.0",
     "passport-twitter": "^1.0.4",
     "path": "^0.12.7",
-    "prisma": "^6.4.0"
+    "prisma": "^6.4.0",
+    "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
     "env-cmd": "^10.1.0",
-    "swagger-autogen": "^2.23.7",
-    "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.1"
+    "swagger-autogen": "^2.23.7"
   }
 }
