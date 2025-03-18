@@ -1,17 +1,17 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "1.0.0",
-    "title": "REST API",
-    "description": ""
+    "title": "My API",
+    "description": "API documentation",
+    "version": "1.0.0"
   },
-  "host": "localhost:3000",
+  "host": "localhost:5000",
   "basePath": "/",
   "schemes": [
     "http"
   ],
   "paths": {
-    "/signIn": {
+    "/api/v1/auth/signIn": {
       "post": {
         "description": "",
         "responses": {
@@ -21,7 +21,7 @@
         }
       }
     },
-    "/twitter": {
+    "/api/v1/auth/twitter": {
       "get": {
         "description": "",
         "parameters": [
@@ -38,7 +38,7 @@
         }
       }
     },
-    "/twitter/callback": {
+    "/api/v1/auth/twitter/callback": {
       "get": {
         "description": "",
         "responses": {
@@ -54,7 +54,7 @@
         }
       }
     },
-    "/getTopics": {
+    "/api/v1/topic/getTopics": {
       "get": {
         "description": "",
         "parameters": [
@@ -89,7 +89,7 @@
         }
       }
     },
-    "/getTopic/{id}": {
+    "/api/v1/topic/getTopic/{id}": {
       "get": {
         "description": "",
         "parameters": [
@@ -110,7 +110,7 @@
         }
       }
     },
-    "/getTopics/user/{userId}": {
+    "/api/v1/topic/getTopics/user/{userId}": {
       "get": {
         "description": "",
         "parameters": [
@@ -141,64 +141,7 @@
         }
       }
     },
-    "/createTopic": {
-      "post": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "topicId": {
-                  "example": "any"
-                },
-                "promoter": {
-                  "example": "any"
-                },
-                "investment": {
-                  "example": "any"
-                },
-                "position": {
-                  "example": "any"
-                },
-                "tokenAddress": {
-                  "example": "any"
-                },
-                "nonce": {
-                  "example": "any"
-                },
-                "chainId": {
-                  "example": "any"
-                },
-                "transactionHash": {
-                  "example": "any"
-                },
-                "blockTimeStamp": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "201": {
-            "description": "Created"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/updateTopic": {
+    "/api/v1/topic/updateTopic": {
       "post": {
         "description": "",
         "parameters": [
@@ -237,7 +180,7 @@
         }
       }
     },
-    "/comments/{topicId}": {
+    "/api/v1/topic/comments/{topicId}": {
       "get": {
         "description": "",
         "parameters": [
@@ -268,7 +211,7 @@
         }
       }
     },
-    "/comment": {
+    "/api/v1/topic/comment": {
       "post": {
         "description": "",
         "parameters": [
@@ -297,6 +240,80 @@
           },
           "400": {
             "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/v1/event/getEventSync": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "internal-secret",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "eventName",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/v1/event/updateEventSync": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "internal-secret",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "eventName",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "blockNumber": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "403": {
+            "description": "Forbidden"
           },
           "500": {
             "description": "Internal Server Error"

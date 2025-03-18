@@ -5,6 +5,7 @@ const router = Router();
 
 import { getTopics, getTopicById, getTopicsByUser, createTopic, updateTopic, getComments, comment } from "../controllers/topic.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
+import { internalAuthMiddleware } from "../middlewares/auth.middleware.js";
 
 router.route('/getTopics').get(getTopics);
 
@@ -12,7 +13,10 @@ router.route('/getTopic/:id').get(getTopicById);
 
 router.route('/getTopics/user/:userId').get(getTopicsByUser);
 
-router.route('/createTopic').post(createTopic);
+router.route('/createTopic')
+  // #swagger.ignore = true
+  .post(internalAuthMiddleware, createTopic);
+
 
 router.route('/updateTopic').post(upload.fields([
     {

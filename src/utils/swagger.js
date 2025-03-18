@@ -5,10 +5,11 @@ const doc = {
     description: "API documentation",
   },
   host: "localhost:5000",
+  basePath: "/",
   schemes: ["http"],
 };
 
 const outputFile = "./swagger-output.json";
-const endpointsFiles = ["../routes/auth.route.js", "../routes/topic.route.js"];
+const endpointsFiles = ["../app.js"];
 
-swaggerAutogen(outputFile, endpointsFiles);
+swaggerAutogen(outputFile, endpointsFiles, doc);

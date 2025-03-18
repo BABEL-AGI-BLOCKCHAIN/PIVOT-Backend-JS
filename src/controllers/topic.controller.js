@@ -34,7 +34,7 @@ const createTopic = async (req, res) => {
         data: {
           id: topicId,
           totalInvestment: decimalInvestment,
-          currentPosition: position+1,
+          currentPosition: position,
           commentCount: 0,
           investorCount: 1,
           transactionHash,
@@ -245,9 +245,9 @@ const getTopicsByUser = async (req, res) => {
 
 const getTopicById = async (req, res) => {
   try {
-    const topicId = req.params.topicId;
+    const id = req.params.id;
     const topic = await prisma.topic.findUnique({
-      where: { id: topicId },
+      where: { id },
       include: {
         createTopic: true,
         metadata: true,
@@ -313,7 +313,9 @@ const invest = async (req, res) => {
       where: { id: topic.id },
       data: {
         totalInvestment: updatedInvestment,
-        currentPosition: position+1,
+        currentPosition: {
+          increment: 1,
+        },
         investorCount: {
           increment: 1,
         },
