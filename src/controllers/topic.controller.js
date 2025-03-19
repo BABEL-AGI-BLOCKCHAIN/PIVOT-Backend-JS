@@ -166,8 +166,8 @@ const getComments = async (req, res) => {
     const skip = (page - 1) * limit;
 
     const comments = await prisma.comment.findMany({
-      where: { topicId },
-      include: { user: true },
+      where: { id: Number(topicId) },
+      include: { author: true },
       orderBy: { createdAt: 'desc' },
       skip,
       take: limit,
@@ -188,7 +188,7 @@ const getComments = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
-      error: error.message || "Internal server error",
+      error: error.response || error.message || "Internal server error",
     });
   }
 };

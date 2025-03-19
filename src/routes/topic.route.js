@@ -25,7 +25,7 @@ router.route('/updateTopic').post(upload.fields([
     }
 ]), updateTopic);
 
-router.route('/comments/:topicId').get(getComments);
+router.route('/getComments/:topicId').get(getComments);
 
 router.route('/comment').post(comment);
 

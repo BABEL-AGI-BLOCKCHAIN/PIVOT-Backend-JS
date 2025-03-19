@@ -180,7 +180,7 @@
         }
       }
     },
-    "/api/v1/topic/comments/{topicId}": {
+    "/api/v1/topic/getComments/{topicId}": {
       "get": {
         "description": "",
         "parameters": [
