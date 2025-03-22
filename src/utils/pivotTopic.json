@@ -1,5 +1,6 @@
 [
     { "type": "constructor", "inputs": [{ "name": "a", "type": "address", "internalType": "address" }], "stateMutability": "nonpayable" },
+    { "type": "function", "name": "_commissionrate", "inputs": [], "outputs": [{ "name": "", "type": "uint16", "internalType": "uint16" }], "stateMutability": "view" },
     {
         "type": "function",
         "name": "_investAddressMap",

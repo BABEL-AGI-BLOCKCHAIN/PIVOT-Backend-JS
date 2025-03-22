@@ -24,6 +24,10 @@ const listenToCreateTopic = async () => {
         transactionHash,
         chainId: chainId.toString(),
         blockTimeStamp,
+      }, {
+        headers: {
+            'internal-secret': process.env.INTERNAL_SECRET,
+        }
       });
     } catch (error) {
       console.error(

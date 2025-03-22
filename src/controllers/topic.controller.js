@@ -34,7 +34,7 @@ const createTopic = async (req, res) => {
         data: {
           id: topicId,
           totalInvestment: decimalInvestment,
-          currentPosition: position+1,
+          currentPosition: position,
           commentCount: 0,
           investorCount: 1,
           transactionHash,
@@ -166,8 +166,8 @@ const getComments = async (req, res) => {
     const skip = (page - 1) * limit;
 
     const comments = await prisma.comment.findMany({
-      where: { topicId },
-      include: { user: true },
+      where: { id: Number(topicId) },
+      include: { author: true },
       orderBy: { createdAt: 'desc' },
       skip,
       take: limit,
@@ -188,7 +188,7 @@ const getComments = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
-      error: error.message || "Internal server error",
+      error: error.response || error.message || "Internal server error",
     });
   }
 };
@@ -245,9 +245,9 @@ const getTopicsByUser = async (req, res) => {
 
 const getTopicById = async (req, res) => {
   try {
-    const topicId = req.params.topicId;
+    const id = req.params.id;
     const topic = await prisma.topic.findUnique({
-      where: { id: topicId },
+      where: { id },
       include: {
         createTopic: true,
         metadata: true,
@@ -261,68 +261,6 @@ const getTopicById = async (req, res) => {
     res.status(200).json({
       topic,
       message: "Topic retrieved successfully",
-    });
-  } catch (error) {
-    res.status(500).json({
-      error: error.message || "Internal server error",
-    });
-  }
-};
-
-const invest = async (req, res) => {
-  try {
-    const { investor, topicId, amount, position, nonce, chainId, transactionHash, blockTimeStamp } = req.body;
-
-    const topic = await prisma.createTopic.findUnique({
-      where: { id: topicId },
-    });
-
-    if (!topic) {
-      return res.status(400).json({ error: "Topic does not exist" });
-    }
-
-    const user = await prisma.user.upsert({
-      where: { walletAddress: investor },
-      update: {},
-      create: { walletAddress: investor },
-    });
-
-    const decimalAmount = safeDecimal(amount);
-
-    const investment = await prisma.invest.create({
-      data: {
-        user: { connect: { walletAddress: user.walletAddress } },
-        topic: { connect: { id: topic.id } },
-        amount: decimalAmount,
-        position,
-        nonce,
-        transactionHash,
-        chainId,
-        blockTimeStamp,
-      },
-    });
-
-    const currentInvestment = safeDecimal(topic.investment);
-    const updatedInvestment = currentInvestment.plus(decimalAmount);
-
-    if (!updatedInvestment.isFinite()) {
-      return res.status(400).json({ error: "Resulting investment is invalid" });
-    }
-
-    await prisma.topic.update({
-      where: { id: topic.id },
-      data: {
-        totalInvestment: updatedInvestment,
-        currentPosition: position+1,
-        investorCount: {
-          increment: 1,
-        },
-      },
-    });
-
-    res.status(201).json({
-      investment,
-      message: "Investment created successfully",
     });
   } catch (error) {
     res.status(500).json({
@@ -378,4 +316,4 @@ const updateTopic = async (req, res) => {
   }
 };
 
-export  {getTopics, getTopicsByUser, getTopicById, createTopic, invest, updateTopic, getComments, comment};
+export  {getTopics, getTopicsByUser, getTopicById, createTopic, updateTopic, getComments, comment};

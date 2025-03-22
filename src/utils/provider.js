@@ -1,5 +1,5 @@
 import { WebSocketProvider, Contract  } from 'ethers';
-import pivotTopicAbi from './pivotTopic.json'  assert { type: "json" }; 
+import pivotTopicAbi from './pivotTopic.json' with { type: "json" }; 
 import { configDotenv } from 'dotenv';
 
 configDotenv()
