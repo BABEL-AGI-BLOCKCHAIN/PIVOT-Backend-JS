@@ -14,7 +14,7 @@ const listenToInvest = async () => {
             
             const blockTimeStamp = new Date(block.timestamp * 1000);
 
-            await axios.post(`${baseURL}/api/v1/topic/invest`, {
+            await axios.post(`${baseURL}/api/v1/invest/createInvest`, {
                 investor,
                 topicId: topicId.toString(),
                 amount: decimalAmount,

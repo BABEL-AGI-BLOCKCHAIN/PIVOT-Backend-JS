@@ -249,6 +249,33 @@
           }
         }
       }
+    },
+    "/api/v1/invest/getPositions": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "topicId",
+            "in": "body",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "investor",
+            "in": "body",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
     }
   }
 }

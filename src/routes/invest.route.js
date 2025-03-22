@@ -1,9 +1,13 @@
 import { Router } from "express";
 import { internalAuthMiddleware } from "../middlewares/auth.middleware.js";
-import { invest } from "../controllers/topic.controller.js";
+import { invest, getPositions } from "../controllers/invest.controller.js";
 
 const router = Router();
 
-router.route('/invest').post(internalAuthMiddleware, invest);
+router.route('/createInvest').
+    // #swagger.ignore = true
+post(internalAuthMiddleware, invest);
+
+router.route('/getPositions').get(getPositions);
 
 export default router;

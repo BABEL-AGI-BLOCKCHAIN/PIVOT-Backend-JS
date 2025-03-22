@@ -48,8 +48,6 @@ app.use
   ('/api/v1/event', eventRouter);
 
 import investRouter from './routes/invest.route.js';
-app.use 
-    // #swagger.ignore = true
-    ('/api/v1/topic', investRouter);
+app.use('/api/v1/invest', investRouter);
 
 export default app;

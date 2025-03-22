@@ -269,70 +269,6 @@ const getTopicById = async (req, res) => {
   }
 };
 
-const invest = async (req, res) => {
-  try {
-    const { investor, topicId, amount, position, nonce, chainId, transactionHash, blockTimeStamp } = req.body;
-
-    const topic = await prisma.createTopic.findUnique({
-      where: { id: topicId },
-    });
-
-    if (!topic) {
-      return res.status(400).json({ error: "Topic does not exist" });
-    }
-
-    const user = await prisma.user.upsert({
-      where: { walletAddress: investor },
-      update: {},
-      create: { walletAddress: investor },
-    });
-
-    const decimalAmount = safeDecimal(amount);
-
-    const investment = await prisma.invest.create({
-      data: {
-        user: { connect: { walletAddress: user.walletAddress } },
-        topic: { connect: { id: topic.id } },
-        amount: decimalAmount,
-        position,
-        nonce,
-        transactionHash,
-        chainId,
-        blockTimeStamp,
-      },
-    });
-
-    const currentInvestment = safeDecimal(topic.investment);
-    const updatedInvestment = currentInvestment.plus(decimalAmount);
-
-    if (!updatedInvestment.isFinite()) {
-      return res.status(400).json({ error: "Resulting investment is invalid" });
-    }
-
-    await prisma.topic.update({
-      where: { id: topic.id },
-      data: {
-        totalInvestment: updatedInvestment,
-        currentPosition: {
-          increment: 1,
-        },
-        investorCount: {
-          increment: 1,
-        },
-      },
-    });
-
-    res.status(201).json({
-      investment,
-      message: "Investment created successfully",
-    });
-  } catch (error) {
-    res.status(500).json({
-      error: error.message || "Internal server error",
-    });
-  }
-};
-
 const updateTopic = async (req, res) => {
   try {
     const { topicId, topicTitle, topicContent, topicHash } = req.body;
@@ -380,4 +316,4 @@ const updateTopic = async (req, res) => {
   }
 };
 
-export  {getTopics, getTopicsByUser, getTopicById, createTopic, invest, updateTopic, getComments, comment};
+export  {getTopics, getTopicsByUser, getTopicById, createTopic, updateTopic, getComments, comment};
