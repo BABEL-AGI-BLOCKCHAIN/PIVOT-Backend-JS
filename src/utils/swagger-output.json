@@ -255,15 +255,13 @@
         "description": "",
         "parameters": [
           {
-            "name": "topicId",
-            "in": "body",
-            "required": true,
+            "name": "id",
+            "in": "query",
             "type": "string"
           },
           {
             "name": "investor",
-            "in": "body",
-            "required": true,
+            "in": "query",
             "type": "string"
           }
         ],

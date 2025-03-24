@@ -67,11 +67,13 @@ const invest = async (req, res) => {
   
 const getPositions = async (req, res) => {
     try {
-      const { topicId, investor} = req.body;
-      const id = String(topicId);
+      const id = req.query.id;
+      const investor = req.query.investor;
+      const topicId = String(id);
+      console.log(topicId, investor);
       const positions = await prisma.invest.findMany({
         where: { 
-          topicId: id, 
+          topicId, 
           investor 
         },
       });

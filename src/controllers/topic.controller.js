@@ -2,6 +2,8 @@ import uploadOnPinata from "../utils/pinata.js";
 import prisma from "../utils/prisma.js";
 import {safeDecimal} from "../utils/validateDecimal.js";
 
+const baseURL = 'http://localhost:5000' || process.env.BASE_URL;
+
 const createTopic = async (req, res) => {
   try {
     const { topicId, promoter, investment, position, tokenAddress, nonce, chainId, transactionHash, blockTimeStamp } = req.body;
@@ -43,6 +45,21 @@ const createTopic = async (req, res) => {
         },
       });
 
+      const newInvest = await axios.post(`${baseURL}/api/v1/invest/createInvest`, {
+        investor: promoter,
+        topicId: topicId.toString(),
+        amount: decimalInvestment,
+        position: Number(position),
+        nonce: nonce.toString(),
+        transactionHash,
+        chainId: chainId.toString(),
+        blockTimeStamp,
+    }, {
+        headers: {
+            'internal-secret': process.env.INTERNAL_SECRET,
+        }
+    });
+
       const newCreateTopic = await tx.createTopic.create({
         data: {
           promoter: { connect: { walletAddress: user.walletAddress } },
@@ -54,7 +71,7 @@ const createTopic = async (req, res) => {
         },
       });
 
-      return { newTopic, newCreateTopic };
+      return { newTopic, newCreateTopic, newInvest };
     });
 
     res.status(201).json({
