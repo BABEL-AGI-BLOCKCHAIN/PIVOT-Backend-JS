@@ -2,11 +2,10 @@ import uploadOnPinata from "../utils/pinata.js";
 import prisma from "../utils/prisma.js";
 import {safeDecimal} from "../utils/validateDecimal.js";
 
-const baseURL = 'http://localhost:5000' || process.env.BASE_URL;
-
 const createTopic = async (req, res) => {
   try {
     const { topicId, promoter, investment, position, tokenAddress, nonce, chainId, transactionHash, blockTimeStamp } = req.body;
+    console.log(req.body);
 
     const user = await prisma.user.upsert({
       where: { walletAddress: promoter },
@@ -45,21 +44,7 @@ const createTopic = async (req, res) => {
         },
       });
 
-      const newInvest = await axios.post(`${baseURL}/api/v1/invest/createInvest`, {
-        investor: promoter,
-        topicId: topicId.toString(),
-        amount: decimalInvestment,
-        position: Number(position),
-        nonce: nonce.toString(),
-        transactionHash,
-        chainId: chainId.toString(),
-        blockTimeStamp,
-    }, {
-        headers: {
-            'internal-secret': process.env.INTERNAL_SECRET,
-        }
-    });
-
+      
       const newCreateTopic = await tx.createTopic.create({
         data: {
           promoter: { connect: { walletAddress: user.walletAddress } },
@@ -68,6 +53,19 @@ const createTopic = async (req, res) => {
           tokenAddress,
           nonce,
           topic: { connect: { id: topicId } },
+        },
+      });
+      
+      const newInvest = await tx.invest.create({
+        data: {
+          user: { connect: { walletAddress: user.walletAddress } },
+          topic: { connect: { id: topicId } },
+          amount: decimalInvestment,
+          position,
+          nonce,
+          transactionHash,
+          chainId,
+          blockTimeStamp,
         },
       });
 
@@ -80,6 +78,7 @@ const createTopic = async (req, res) => {
       message: "Topic created successfully",
     });
   } catch (error) {
+    console.log (error.res || error.message);
     res.status(500).json({
       error: error.message || "Internal server error",
     });
