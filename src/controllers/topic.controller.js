@@ -5,7 +5,6 @@ import {safeDecimal} from "../utils/validateDecimal.js";
 const createTopic = async (req, res) => {
   try {
     const { topicId, promoter, investment, position, tokenAddress, nonce, chainId, transactionHash, blockTimeStamp } = req.body;
-    console.log(req.body);
 
     const user = await prisma.user.upsert({
       where: { walletAddress: promoter },
@@ -56,20 +55,7 @@ const createTopic = async (req, res) => {
         },
       });
       
-      const newInvest = await tx.invest.create({
-        data: {
-          user: { connect: { walletAddress: user.walletAddress } },
-          topic: { connect: { id: topicId } },
-          amount: decimalInvestment,
-          position,
-          nonce,
-          transactionHash,
-          chainId,
-          blockTimeStamp,
-        },
-      });
-
-      return { newTopic, newCreateTopic, newInvest };
+      return { newTopic, newCreateTopic };
     });
 
     res.status(201).json({

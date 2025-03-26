@@ -66,26 +66,38 @@ const invest = async (req, res) => {
 };
   
 const getPositions = async (req, res) => {
-    try {
+  try {
       const id = req.query.id;
       const investor = req.query.investor;
       const topicId = String(id);
+
       const positions = await prisma.invest.findMany({
-        where: { 
-          topicId, 
-          investor 
-        },
+          where: { 
+              topicId, 
+              investor 
+          },
       });
-  
+
+      const authorInvestment = await prisma.createTopic.findUnique({
+          where: { id: topicId },
+          select: {
+              investment: true,
+              promoterId: true,
+              position: true,
+          }
+      });
+
       res.status(200).json({
-        positions,
-        message: "Positions retrieved successfully",
+          positions,
+          authorInvestment,
+          message: "Positions retrieved successfully",
       });
-    } catch (error) {
+  } catch (error) {
       res.status(500).json({
-        error: error.message || "Internal server error",
+          error: error.message || "Internal server error",
       });
-    }
-}
+  }
+};
+
   
 export { invest, getPositions };
