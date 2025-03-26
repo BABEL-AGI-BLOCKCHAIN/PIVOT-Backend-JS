@@ -79,7 +79,7 @@ const getPositions = async (req, res) => {
       });
 
       const authorInvestment = await prisma.createTopic.findUnique({
-          where: { id: topicId },
+          where: { id: topicId, promoterId: investor },
           select: {
               investment: true,
               promoterId: true,
@@ -88,8 +88,8 @@ const getPositions = async (req, res) => {
       });
 
       res.status(200).json({
-          positions,
-          authorInvestment,
+          positions: [...(authorInvestment?.position ? [authorInvestment.position] : []), ...positions],
+          // authorInvestment,
           message: "Positions retrieved successfully",
       });
   } catch (error) {
