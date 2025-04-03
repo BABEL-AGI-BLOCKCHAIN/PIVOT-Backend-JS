@@ -83,6 +83,18 @@ model Invest {
   blockTimeStamp  DateTime
 }
 
+model Withdraw {
+  id           Int      @id @default(autoincrement())
+  walletAddress String 
+  amount        Decimal @default(0) @db.Decimal(80, 18)
+  nonce        String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  transactionHash String
+  chainId      String
+  blockTimeStamp DateTime
+}
+
 model EventSync {
   eventName String @id
   lastBlock BigInt

@@ -50,4 +50,11 @@ app.use
 import investRouter from './routes/invest.route.js';
 app.use('/api/v1/invest', investRouter);
 
+
+import withdrawRouter from './routes/withdraw.route.js';
+
+app.use
+    // #swagger.ignore = true
+  ('/api/v1/withdraw', withdrawRouter);
+
 export default app;

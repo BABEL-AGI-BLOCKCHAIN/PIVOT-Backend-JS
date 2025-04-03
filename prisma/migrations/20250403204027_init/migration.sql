@@ -79,6 +79,21 @@ CREATE TABLE "Invest" (
 );
 
 -- CreateTable
+CREATE TABLE "Withdraw" (
+    "id" SERIAL NOT NULL,
+    "walletAddress" TEXT NOT NULL,
+    "amount" DECIMAL(80,18) NOT NULL DEFAULT 0,
+    "nonce" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "transactionHash" TEXT NOT NULL,
+    "chainId" TEXT NOT NULL,
+    "blockTimeStamp" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Withdraw_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "EventSync" (
     "eventName" TEXT NOT NULL,
     "lastBlock" BIGINT NOT NULL,
