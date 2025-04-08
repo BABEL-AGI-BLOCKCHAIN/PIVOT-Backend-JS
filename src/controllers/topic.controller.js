@@ -276,10 +276,11 @@ const updateTopic = async (req, res) => {
     const { topicId, topicTitle, topicContent, topicHash } = req.body;
 
     const imageLocalPath = req.files?.image?.[0]?.path;
-    let imageUrl = null;
+    
+    let mediaCID = null;
     if (imageLocalPath) {
       const uploadedImage = await uploadOnPinata(imageLocalPath);
-      imageUrl = uploadedImage;
+      mediaCID = uploadedImage;
     }
 
     const existingTopic = await prisma.topic.findUnique({
@@ -296,13 +297,13 @@ const updateTopic = async (req, res) => {
         topicTitle,
         topicContent,
         topicHash,
-        imageUrl,
+        mediaCID,
       },
       create: {
         topicTitle,
         topicContent,
         topicHash,
-        imageUrl,
+        mediaCID,
         topic: { connect: { id: topicId } },
       },
     });
