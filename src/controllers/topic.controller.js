@@ -162,7 +162,7 @@ const getComments = async (req, res) => {
         const skip = (page - 1) * limit;
 
         const comments = await prisma.comment.findMany({
-            where: { id: Number(topicId) },
+            where: { topicId },
             include: { author: true },
             orderBy: { createdAt: "desc" },
             skip,
