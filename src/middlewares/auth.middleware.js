@@ -8,10 +8,10 @@ const verifyJWT = async (req, res, next) => {
             throw new Error("Unauthorized request");
         }
 
-        const isAuthorized = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-
-        const user = await prisma.user.findUnique(isAuthorized.id).select("-password -refreshToken");
-
+        const isAuthorized = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await prisma.user.findUnique({
+            where: { walletAddress: isAuthorized.walletAddress },
+        });
         if (!user) {
             throw new Error("Unauthorized request");
         }
