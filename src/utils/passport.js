@@ -12,7 +12,7 @@ passport.use(
     {
       consumerKey: process.env.TWITTER_CLIENT_ID,
       consumerSecret: process.env.TWITTER_CLIENT_SECRET,
-      callbackURL: `${baseUrl}/api/v1/auth/twitter/callback`,
+      callbackURL: `https://ziopwmhohqon.usw.sealos.io/api/v1/auth/twitter/callback`,
       includeEmail: false,
       passReqToCallback: true,
     },
