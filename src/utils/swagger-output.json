@@ -24,6 +24,16 @@
     "/api/v1/auth/twitter": {
       "get": {
         "description": "",
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/api/v1/user/getUser": {
+      "get": {
+        "description": "",
         "parameters": [
           {
             "name": "walletAddress",
@@ -34,22 +44,6 @@
         "responses": {
           "400": {
             "description": "Bad Request"
-          }
-        }
-      }
-    },
-    "/api/v1/auth/twitter/callback": {
-      "get": {
-        "description": "",
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "500": {
-            "description": "Internal Server Error"
           }
         }
       }

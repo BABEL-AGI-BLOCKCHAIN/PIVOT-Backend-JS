@@ -2,22 +2,23 @@ import { Router } from "express";
 
 import signIn from "../controllers/signIn.controller.js";
 import passport from "../utils/passport.js";
+import { verifyJWT } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
 router.route("/signIn").post(signIn);
-router.get("/twitter", (req, res, next) => {
-    const { walletAddress } = req.query;
+router.get("/twitter", verifyJWT, (req, res, next) => {
+    const { walletAddress } = req.user;
 
-    if (!walletAddress) {
-        return res.status(400).json({ success: false, message: "walletAddress is required" });
-    }
+    // if (!walletAddress) {
+    //     return res.status(400).json({ success: false, message: "walletAddress is required" });
+    // }
 
     req.session.walletAddress = walletAddress;
     passport.authenticate("twitter")(req, res, next);
 });
 
-router.get("/twitter/callback", (req, res, next) => {
+router.get("/twitter/callback", verifyJWT, (req, res, next) => {
     passport.authenticate("twitter", (err, user) => {
         if (err || !user) {
             // return res.status(401).json({

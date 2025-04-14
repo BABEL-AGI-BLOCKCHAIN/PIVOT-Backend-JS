@@ -128,7 +128,9 @@ const getTopics = async (req, res) => {
             skip,
             take: limit,
             include: {
-                createTopic: true,
+                createTopic: {
+                    include: { promoter: true },
+                },
                 metadata: true,
             },
             orderBy: {
@@ -245,7 +247,9 @@ const getTopicById = async (req, res) => {
         const topic = await prisma.topic.findUnique({
             where: { id },
             include: {
-                createTopic: true,
+                createTopic: {
+                    include: { promoter: true },
+                },
                 metadata: true,
             },
         });
