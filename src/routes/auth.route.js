@@ -8,8 +8,11 @@ const router = Router();
 
 router.route("/signIn").post(signIn);
 router.get("/twitter", verifyJWT, (req, res, next) => {
-    const { walletAddress } = req.user;
+    const { walletAddress, twitterHandle } = req.user;
 
+    if (twitterHandle) {
+        return res.redirect(`${process.env.FRONTEND_WEBSITE}/twitter/callback?status=400`);
+    }
     // if (!walletAddress) {
     //     return res.status(400).json({ success: false, message: "walletAddress is required" });
     // }

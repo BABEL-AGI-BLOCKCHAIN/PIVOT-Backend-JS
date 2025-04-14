@@ -3,7 +3,7 @@ import prisma from "../utils/prisma.js";
 
 const verifyJWT = async (req, res, next) => {
     try {
-        const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "");
+        const token = req.query.accessToken || req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "");
         if (!token) {
             throw new Error("Unauthorized request");
         }
@@ -12,6 +12,7 @@ const verifyJWT = async (req, res, next) => {
         const user = await prisma.user.findUnique({
             where: { walletAddress: isAuthorized.walletAddress },
         });
+
         if (!user) {
             throw new Error("Unauthorized request");
         }
