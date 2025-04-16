@@ -16,22 +16,23 @@ const createTopic = async (req, res) => {
             return res.status(400).json({ error: "Promoter does not exist" });
         }
 
-        const existingTopic = await prisma.topic.findUnique({
-            where: { id: topicId },
-        });
+        // const existingTopic = await prisma.topic.findUnique({
+        //     where: { id: topicId },
+        // });
 
-        if (existingTopic) {
-            return res.status(200).json({
-                message: "Topic already exists",
-                topic: existingTopic,
-            });
-        }
+        // if (existingTopic) {
+        //     return res.status(200).json({
+        //         message: "Topic already exists",
+        //         topic: existingTopic,
+        //     });
+        // }
 
         const decimalInvestment = safeDecimal(investment);
 
         const result = await prisma.$transaction(async (tx) => {
-            const newTopic = await tx.topic.create({
-                data: {
+            const newTopic = await tx.topic.upsert({
+                where: { id: topicId },
+                update: {
                     id: topicId,
                     totalInvestment: decimalInvestment,
                     currentPosition: position,
@@ -41,6 +42,7 @@ const createTopic = async (req, res) => {
                     chainId,
                     blockTimeStamp,
                 },
+                create: { id: topicId, totalInvestment: decimalInvestment, currentPosition: position, commentCount: 0, investorCount: 1, transactionHash, chainId, blockTimeStamp },
             });
 
             const newCreateTopic = await tx.createTopic.create({
@@ -281,13 +283,13 @@ const updateTopic = async (req, res) => {
             mediaCID = uploadedImage;
         }
 
-        const existingTopic = await prisma.topic.findUnique({
-            where: { id: topicId },
-        });
+        // const existingTopic = await prisma.topic.findUnique({
+        //     where: { id: topicId },
+        // });
 
-        if (!existingTopic) {
-            return res.status(404).json({ error: "Topic not found" });
-        }
+        // if (!existingTopic) {
+        //     return res.status(404).json({ error: "Topic not found" });
+        // }
 
         const metadata = await prisma.metadata.upsert({
             where: { topicId },
@@ -302,8 +304,25 @@ const updateTopic = async (req, res) => {
                 topicContent,
                 topicHash,
                 mediaCID,
-                topic: { connect: { id: topicId } },
+                topic: {
+                    connectOrCreate: {
+                        where: { id: topicId },
+                        create: { id: topicId, currentPosition: 0, investorCount: 0, commentCount: 0, blockTimeStamp: new Date(), transactionHash: "", chainId: "" },
+                    },
+                },
             },
+        });
+
+        await new Promise(async (resolve) => {
+            setInterval(async () => {
+                const existingTopic = await prisma.topic.findUnique({
+                    where: { id: topicId },
+                });
+
+                if (existingTopic.transactionHash) {
+                    resolve();
+                }
+            }, 3000);
         });
 
         res.status(201).json({
@@ -311,6 +330,7 @@ const updateTopic = async (req, res) => {
             message: "Metadata updated successfully",
         });
     } catch (error) {
+        console.log(error.message);
         res.status(500).json({
             error: error.message || "Internal server error",
         });
