@@ -24,7 +24,7 @@ const withdraw = async (req, res) => {
             },
         });
         res.status(200).json(withdraw);
-        console.log("Withdraw created:", withdraw);
+        // console.log("Withdraw created:", withdraw);
         
     } catch (error) {
         console.error("Error in withdraw controller:", error);
