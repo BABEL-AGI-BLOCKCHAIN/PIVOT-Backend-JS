@@ -21,7 +21,7 @@ router.get("/twitter", verifyJWT, (req, res, next) => {
     passport.authenticate("twitter")(req, res, next);
 });
 
-router.get("/twitter/callback", verifyJWT, (req, res, next) => {
+router.get("/twitter/callback", (req, res, next) => {
     passport.authenticate("twitter", (err, user) => {
         if (err || !user) {
             // return res.status(401).json({
