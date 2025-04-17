@@ -111,7 +111,7 @@ const getPositions = async (req, res) => {
 
         res.status(200).json({
             positions: [
-                ...positions.map((item) => ({ position: item.position, blockTimeStamp })),
+                ...positions.map((item) => ({ position: item.position, blockTimeStamp: item.blockTimeStamp })),
                 ...(authorInvestment?.position ? [{ position: authorInvestment.position, blockTimeStamp: authorCreatedTopic.blockTimeStamp }] : []),
             ],
             // authorInvestment,
