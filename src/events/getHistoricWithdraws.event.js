@@ -5,8 +5,8 @@ import { safeDecimal } from "../utils/validateDecimal.js";
 const MAX_BLOCK_RANGE = 50000;
 const baseURL = process.env.BASE_URL || "http://localhost:5000";
 
-async function processHistoricInvestEvents() {
-  const eventName = "Invest";
+async function processHistoricWithdrawEvents() {
+  const eventName = "Withdraw";
   try {
     const getResponse = await axios.get(`${baseURL}/api/v1/event/getEventSync?eventName=${eventName}`, {
       headers: {
@@ -21,15 +21,16 @@ async function processHistoricInvestEvents() {
     const toBlock = BigInt(currentBlock);
     
     while (fromBlock <= toBlock) {
+      console.log(`Processing blocks from ${fromBlock} to ${toBlock}`);
       const blockRange = BigInt(MAX_BLOCK_RANGE);
       const candidate = fromBlock + blockRange - 1n;
       const endBlock = candidate < toBlock ? candidate : toBlock;
       
-      const filter = contract.filters[eventName](null, null, null, null, null);
+      const filter = contract.filters[eventName](null, null, null);
       const events = await contract.queryFilter(filter, fromBlock, endBlock);
       
       for (const e of events) {
-        const { investor, topicId, amount, position, nonce } = e.args;
+        const { to, amount, nonce } = e.args;
         try {
           const { chainId } = await provider.getNetwork();
           const transactionHash = e.transactionHash || e.log.transactionHash;
@@ -38,11 +39,9 @@ async function processHistoricInvestEvents() {
       
           const blockTimeStamp = new Date(block.timestamp * 1000);
           
-          await axios.post(`${baseURL}/api/v1/invest/createInvest`, {
-            investor,
-            topicId: topicId.toString(),
+          await axios.post(`${baseURL}/api/v1/withdraw/withdraw`, {
+            to,
             amount: decimalAmount,
-            position: Number(position),
             nonce: nonce.toString(),
             transactionHash,
             chainId: chainId.toString(),
@@ -54,7 +53,7 @@ async function processHistoricInvestEvents() {
         });
         } catch (error) {
           console.error(
-            "Error processing invest event:",
+            "Error processing withdraw event:",
             error.response ? error.response.data : error.message
           );
         }
@@ -79,10 +78,10 @@ async function processHistoricInvestEvents() {
     }
   } catch (error) {
     console.error(
-      "Error processing historic invest events:",
+      "Error processing historic withdraw events:",
       error.response ? error.response.data : error.message
     );
   }
 }
 
-export default processHistoricInvestEvents;
+export default processHistoricWithdrawEvents;

@@ -2,25 +2,31 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon src/index.js",
-    "migrate": "env-cmd -f .env.local npx prisma migrate dev --name init --skip-seed"
+    "migrate": "npx env-cmd -f .env.local npx prisma migrate dev --name init --skip-seed",
+    "swagger-autogen": "node src/utils/swagger.js"
   },
   "dependencies": {
     "@prisma/client": "^6.4.0",
-    "axios": "^1.7.9",
+    "axios": "^1.8.4",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "ethers": "^6.13.5",
     "express": "^4.21.2",
+    "express-session": "^1.18.1",
     "form-data": "^4.0.2",
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.1",
     "node-cron": "^3.0.3",
     "nodemon": "^3.1.9",
+    "passport": "^0.7.0",
+    "passport-twitter": "^1.0.4",
     "path": "^0.12.7",
-    "prisma": "^6.4.0"
+    "prisma": "^6.4.0",
+    "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
-    "env-cmd": "^10.1.0"
+    "env-cmd": "^10.1.0",
+    "swagger-autogen": "^2.23.7"
   }
 }

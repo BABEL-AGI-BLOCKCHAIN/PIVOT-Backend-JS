@@ -38,7 +38,7 @@ async function uploadOnPinata(filePath) {
     await fsPromises.unlink(normalizedPath);
 
     const cid = response.data.IpfsHash;
-    return `https://gateway.pinata.cloud/ipfs/${cid}`;
+    return cid;
   } catch (error) {
     throw new Error(`Error uploading to Pinata: ${error.message}`);
   }
