@@ -34,12 +34,22 @@ const invest = async (req, res) => {
             },
         });
 
-        const currentInvestment = safeDecimal(topic.investment);
+        const _topic = await prisma.topic.findUnique({
+            where: { id: topic.id },
+        });
+        const currentInvestment = safeDecimal(_topic.totalInvestment);
         const updatedInvestment = currentInvestment.plus(decimalAmount);
 
         if (!updatedInvestment.isFinite()) {
             return res.status(400).json({ error: "Resulting investment is invalid" });
         }
+
+        const existingInvestment = await prisma.invest.findFirst({
+            where: {
+                user: { walletAddress: user.walletAddress },
+                topic: { id: topic.id },
+            },
+        });
 
         await prisma.topic.update({
             where: { id: topic.id },
@@ -48,9 +58,11 @@ const invest = async (req, res) => {
                 currentPosition: {
                     increment: 1,
                 },
-                investorCount: {
-                    increment: 1,
-                },
+                ...(!existingInvestment && {
+                    investorCount: {
+                        increment: 1,
+                    },
+                }),
             },
         });
 
@@ -99,7 +111,7 @@ const getPositions = async (req, res) => {
 
         res.status(200).json({
             positions: [
-                ...positions.map((item) => ({ position: item.position, blockTimeStamp })),
+                ...positions.map((item) => ({ position: item.position, blockTimeStamp: item.blockTimeStamp })),
                 ...(authorInvestment?.position ? [{ position: authorInvestment.position, blockTimeStamp: authorCreatedTopic.blockTimeStamp }] : []),
             ],
             // authorInvestment,

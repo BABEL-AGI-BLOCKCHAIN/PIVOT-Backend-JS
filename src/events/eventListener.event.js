@@ -13,7 +13,7 @@ const initEventListeners = () => {
   getHistoricTopics();
   getHistoricInvests();
   getHistoricWithdraws();
-  cron.schedule('*/2 * * * *', () => {
+  cron.schedule('*/10 * * * *', () => {
       getHistoricTopics();
       getHistoricInvests();
       getHistoricWithdraws();
